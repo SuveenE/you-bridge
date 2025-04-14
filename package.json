@@ -74,12 +74,15 @@
   },
   "dependencies": {
     "@electron/notarize": "^2.3.2",
+    "@types/electron": "^1.4.38",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.16.0"
+    "react-router-dom": "^6.16.0",
+    "save-dev": "^0.0.1-security",
+    "tldraw": "^3.11.1"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.3.0",
@@ -152,8 +155,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Goat",
+    "appId": "goat.suveen",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -192,8 +195,15 @@
       ]
     },
     "win": {
+      "publisherName": "Goat",
       "target": [
-        "nsis"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ]
     },
     "linux": {
