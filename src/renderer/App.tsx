@@ -1,6 +1,6 @@
 import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import 'tldraw/tldraw.css';
-import icon from '../../assets/icon-1.jpg';
+import icon from '../../assets/icon.png';
 import './App.css';
 import Home from './components/Home';
 
