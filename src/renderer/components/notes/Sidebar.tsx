@@ -8,13 +8,13 @@ interface Note {
 
 interface SidebarProps {
   notes: Note[];
-  setContent: (content: string) => void;
+  selectNote: (date: string, content: string) => void;
   setIsSidebarOpen: (open: boolean) => void;
 }
 
 function Sidebar({
   notes,
-  setContent,
+  selectNote,
   setIsSidebarOpen,
 }: SidebarProps): JSX.Element {
   return (
@@ -31,14 +31,14 @@ function Sidebar({
                 key={note.date}
                 className="w-full text-left p-2 hover:bg-gray-100 rounded cursor-pointer"
                 onClick={() => {
-                  setContent(note.content);
+                  selectNote(note.date, note.content);
                   setIsSidebarOpen(false);
                 }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
-                    setContent(note.content);
+                    selectNote(note.date, note.content);
                     setIsSidebarOpen(false);
                   }
                 }}
