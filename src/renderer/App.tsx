@@ -1,10 +1,14 @@
+import { useState } from 'react';
+
 import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import 'tldraw/tldraw.css';
 import icon from '../../assets/icon.png';
 import './App.css';
 import Home from './components/Home';
+import { Calendar } from './components/ui/calendar';
 
 function Hello() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="Hello">
@@ -19,6 +23,12 @@ function Hello() {
       >
         Go to Drawing Board
       </Link>
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={(value) => setDate(value)}
+        className="rounded-md border bg-black"
+      />
     </div>
   );
 }
