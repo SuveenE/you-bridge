@@ -4,7 +4,7 @@ interface NoteEditorProps {
   date: string;
   content: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  readOnly?: boolean;
+  readOnly: boolean;
 }
 
 function NoteEditor({
@@ -35,9 +35,5 @@ function NoteEditor({
     </div>
   );
 }
-
-NoteEditor.defaultProps = {
-  readOnly: false,
-};
 
 export default NoteEditor;
