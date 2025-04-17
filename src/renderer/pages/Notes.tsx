@@ -80,7 +80,7 @@ export default function Notes() {
         />
       )}
       <NoteEditor
-        date={selectedDate ? todayString : ''}
+        date={selectedDate}
         content={content}
         onChange={handleContentChange}
         readOnly={isReadOnly}
