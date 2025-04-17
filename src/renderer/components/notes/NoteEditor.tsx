@@ -1,4 +1,6 @@
 import React, { JSX } from 'react';
+import { Lock } from 'lucide-react';
+
 
 interface NoteEditorProps {
   date: string;
@@ -15,11 +17,11 @@ function NoteEditor({
 }: NoteEditorProps): JSX.Element {
   return (
     <div className="flex flex-col items-center h-screen p-6 text-black flex-1">
-      <div className="text-sm font-normal w-3/5 mb-3 opacity-60">
-        {date}
+      <div className="flex flex-row text-sm font-normal w-3/5 mb-3 opacity-60">
+        <p>{date}</p>
         {readOnly && (
           <span className="ml-2 text-amber-600">
-            (View only - cannot edit past notes)
+            <Lock className="h-4 w-4" />
           </span>
         )}
       </div>
