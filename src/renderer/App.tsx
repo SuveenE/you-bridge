@@ -3,7 +3,6 @@ import {
   MemoryRouter as Router,
   Routes,
   Route,
-  Link,
   useNavigate,
 } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -67,30 +66,31 @@ function Hello() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800">
+      <p className="text-lg font-bold mb-6">Notes, ToDos, Reminders</p>
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
-      <div className="text-sm text-gray-500 mb-8">By Suveen</div>
-      <Link
+      {/* <Link
         to="/notes"
         className="px-3 py-1.5 mb-6 border border-gray-300 text-gray-700 rounded-sm hover:bg-gray-50 transition"
       >
         Notes
-      </Link>
+      </Link> */}
       <Calendar
         mode="single"
         selected={date}
         onSelect={handleDateSelect}
-        className="rounded-sm border border-gray-200"
+        className="rounded-2xl border border-gray-200"
         modifiers={{
           hasNote: noteDates,
           today: [today],
           pastWithoutNote: pastDatesWithoutNotes,
         }}
         modifiersStyles={{
-          hasNote: { backgroundColor: '#d1fae5' }, // Green background for days with notes
-          today: { backgroundColor: '#fef3c7' }, // Yellow background for today
-          pastWithoutNote: { backgroundColor: '#fee2e2' }, // Red background for past days without notes
+          hasNote: { backgroundColor: '#86efac' }, // Brighter green for days with notes
+          today: { backgroundColor: '#fde68a' }, // Brighter yellow for today
+          pastWithoutNote: { backgroundColor: '#fca5a5' }, // Brighter red for past days without notes
         }}
       />
+      <div className="text-sm text-gray-500 my-8">By Suveen</div>
     </div>
   );
 }
