@@ -1,5 +1,5 @@
 import React, { JSX } from 'react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isToday } from 'date-fns';
 
 interface Note {
   date: string;
@@ -20,7 +20,9 @@ function Sidebar({
   return (
     <div className="w-52 bg-gray-50 h-full overflow-y-auto border-r text-xs">
       <div className="p-3">
-        <div className="text-sm font-normal mb-3 opacity-70">Notes</div>
+        <div className="text-sm font-normal mb-3 ml-2 opacity-70">
+          Previous Stacks
+        </div>
         <div className="space-y-1">
           {notes
             .sort(
@@ -43,8 +45,13 @@ function Sidebar({
                   }
                 }}
               >
-                <div className="font-normal opacity-70">
-                  {format(parseISO(note.date), 'MMM d, yyyy')}
+                <div className="font-normal opacity-70 flex items-center justify-between">
+                  <div>{format(parseISO(note.date), 'EEE, MMM d, yyyy')}</div>
+                  {isToday(parseISO(note.date)) && (
+                    <div className="text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">
+                      Today
+                    </div>
+                  )}
                 </div>
                 <div className="text-xs opacity-50 truncate mt-1">
                   {note.content.substring(0, 40)}

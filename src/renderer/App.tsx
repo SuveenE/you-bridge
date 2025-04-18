@@ -66,7 +66,10 @@ function Hello() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800">
-      <p className="text-lg font-bold mb-6">Notes, ToDos, Reminders</p>
+      <p className="text-lg font-bold mb-2">Stack</p>
+      <p className="text-sm text-gray-500 mb-4">
+        A simple way to track your notes, todos, and reminders.
+      </p>
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
       {/* <Link
         to="/notes"

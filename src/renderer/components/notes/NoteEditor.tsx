@@ -1,6 +1,6 @@
 import React, { JSX, useEffect, useRef } from 'react';
 import { Lock } from 'lucide-react';
-
+import { format, parseISO } from 'date-fns';
 
 interface NoteEditorProps {
   date: string;
@@ -28,10 +28,13 @@ function NoteEditor({
     adjustHeight();
   }, [content]);
 
+  // Format the date to include day of week
+  const formattedDate = date ? format(parseISO(date), 'EEEE, MMM d, yyyy') : '';
+
   return (
     <div className="flex flex-col items-center h-screen p-6 text-black flex-1">
       <div className="flex flex-row text-sm font-normal w-3/5 mb-3 opacity-60">
-        <p>{date}</p>
+        <p>{formattedDate}</p>
         {readOnly && (
           <span className="ml-2 text-amber-600">
             <Lock className="h-4 w-4" />
