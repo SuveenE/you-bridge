@@ -1,5 +1,5 @@
-import React, { JSX } from 'react';
-import { Menu, Home } from 'lucide-react';
+import { JSX } from 'react';
+import { HistoryIcon, Home, SettingsIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface NavigationProps {
@@ -13,7 +13,13 @@ function Navigation({ toggleSidebar }: NavigationProps): JSX.Element {
         to="/"
         className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
       >
-        <Home size={14} />
+        <Home size={16} />
+      </Link>
+      <Link
+        to="/"
+        className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
+      >
+        <SettingsIcon size={16} />
       </Link>
       <div
         onClick={toggleSidebar}
@@ -26,7 +32,7 @@ function Navigation({ toggleSidebar }: NavigationProps): JSX.Element {
           }
         }}
       >
-        <Menu size={14} />
+        <HistoryIcon size={16} />
       </div>
     </div>
   );
