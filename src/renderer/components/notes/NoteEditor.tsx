@@ -17,6 +17,7 @@ function NoteEditor({
   readOnly = false,
 }: NoteEditorProps): JSX.Element {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [syncAttempted, setSyncAttempted] = useState(false);
 
   // Check if the currently viewed note is from today
   const isTodayNote = date ? isToday(parseISO(date)) : false;
@@ -43,8 +44,9 @@ function NoteEditor({
     content: appleNoteContent,
     isLoading,
     error,
+    refetch,
   } = useAppleNotes(isTodayNote ? settings.noteName : '', {
-    todayOnly: settings.todayOnly,
+    todayOnly: false, // Always fetch entire note regardless of setting
   });
 
   const adjustHeight = () => {
@@ -60,9 +62,21 @@ function NoteEditor({
 
   // Handle importing Apple Notes content into the editor
   const importFromAppleNotes = () => {
+    setSyncAttempted(true);
+
+    // Force a refetch of Apple Notes content
+    if (refetch) {
+      refetch();
+    }
+
     if (appleNoteContent && !readOnly && isTodayNote) {
+      // Append the Apple Notes content to existing content
+      const updatedContent = content
+        ? `${content}\n\n${appleNoteContent}`
+        : appleNoteContent;
+
       const event = {
-        target: { value: appleNoteContent },
+        target: { value: updatedContent },
       } as React.ChangeEvent<HTMLTextAreaElement>;
       onChange(event);
     }
@@ -78,10 +92,14 @@ function NoteEditor({
     }
 
     if (appleNoteContent) {
-      return 'bg-amber-100 text-amber-800 hover:bg-amber-200';
+      return 'bg-lime-200 text-gray-800 hover:bg-lime-300';
     }
 
-    return 'bg-gray-100 text-gray-400';
+    if (syncAttempted && !appleNoteContent) {
+      return 'bg-red-100 text-red-800 hover:bg-red-200';
+    }
+
+    return 'bg-lime-200 text-gray-800 hover:bg-lime-300';
   };
 
   // Render note content based on state
@@ -94,7 +112,26 @@ function NoteEditor({
       return <p className="text-red-500">Error: {error.message}</p>;
     }
 
-    return <div>{appleNoteContent}</div>;
+    if (syncAttempted && !appleNoteContent) {
+      return (
+        <p className="text-amber-800">
+          No content found. Please check your Apple Notes settings and make
+          sure the note exists.
+        </p>
+      );
+    }
+
+    // Display the Apple Note content with proper whitespace handling
+    return (
+      <div>
+        <p className="text-xs text-gray-500 mb-2">
+          Apple Note preview (click sync button to import):
+        </p>
+        <div className="apple-note-content whitespace-pre-line text-sm font-sans overflow-auto">
+          {appleNoteContent}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -114,7 +151,7 @@ function NoteEditor({
             <button
               type="button"
               onClick={importFromAppleNotes}
-              disabled={isLoading || !appleNoteContent}
+              disabled={isLoading}
               className={`p-1.5 rounded-md ${getSyncButtonClass()}`}
               title="Sync with Apple Notes"
             >
@@ -126,8 +163,8 @@ function NoteEditor({
         </div>
       </div>
 
-      {appleNoteContent && isTodayNote && !readOnly && (
-        <div className="w-3/5 mb-4 p-3 text-sm border rounded-lg bg-amber-50 max-h-40 overflow-auto">
+      {(syncAttempted || appleNoteContent) && isTodayNote && !readOnly && (
+        <div className="w-3/5 mb-4 p-3 text-sm border rounded-lg bg-amber-50 max-h-60 overflow-auto">
           {renderNoteContent()}
         </div>
       )}
