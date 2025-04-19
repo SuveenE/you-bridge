@@ -15,9 +15,29 @@ export default function Notes() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
+  const [appleNoteName, setAppleNoteName] = useState('Suveen Daily Notes');
+  const [todayOnly, setTodayOnly] = useState(true);
+
   const today = new Date();
   const todayString = format(today, 'yyyy-MM-dd');
   const location = useLocation();
+
+  // Save Apple Notes settings
+  const saveSettings = (noteName: string, onlyToday: boolean) => {
+    const settings = { noteName, todayOnly: onlyToday };
+    localStorage.setItem('appleNotesSettings', JSON.stringify(settings));
+  };
+
+  // Handle Apple Notes settings changes
+  const handleAppleNoteNameChange = (name: string) => {
+    setAppleNoteName(name);
+    saveSettings(name, todayOnly);
+  };
+
+  const handleTodayOnlyChange = (value: boolean) => {
+    setTodayOnly(value);
+    saveSettings(appleNoteName, value);
+  };
 
   useEffect(() => {
     // Get date from URL query parameter if available
@@ -71,6 +91,24 @@ export default function Notes() {
     }
   }, [location.search, todayString]);
 
+  // Load Apple Notes settings from local storage
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('appleNotesSettings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        if (settings.noteName) {
+          setAppleNoteName(settings.noteName);
+        }
+        if (settings.todayOnly !== undefined) {
+          setTodayOnly(settings.todayOnly);
+        }
+      } catch (error) {
+        console.error('Error loading Apple Notes settings:', error);
+      }
+    }
+  }, []);
+
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setContent(newContent);
@@ -101,7 +139,13 @@ export default function Notes() {
 
   return (
     <div className="flex w-screen h-screen text-black bg-white">
-      <Navigation toggleSidebar={toggleSidebar} />
+      <Navigation
+        toggleSidebar={toggleSidebar}
+        appleNoteName={appleNoteName}
+        onAppleNoteNameChange={handleAppleNoteNameChange}
+        todayOnly={todayOnly}
+        onTodayOnlyChange={handleTodayOnlyChange}
+      />
       {isSidebarOpen && (
         <Sidebar
           notes={notes}
