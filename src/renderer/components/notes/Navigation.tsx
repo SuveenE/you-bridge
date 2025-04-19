@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Home, Settings, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { AppleNotesSettings } from './AppleNotesSettings';
+import NotesSettings from './Settings';
 
 interface NavigationProps {
   toggleSidebar: () => void;
@@ -49,7 +49,7 @@ function Navigation({
         <History size={16} />
       </button>
 
-      <AppleNotesSettings
+      <NotesSettings
         open={showSettings}
         onOpenChange={setShowSettings}
         noteName={appleNoteName}
