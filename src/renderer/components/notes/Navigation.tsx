@@ -35,7 +35,7 @@ function Navigation({
       <button
         type="button"
         onClick={() => setShowSettings(true)}
-        className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
+        className="p-1 m-[4px] rounded flex items-center justify-center opacity-60 hover:opacity-100 bg-transparent"
         aria-label="Apple Notes Settings"
       >
         <Settings size={16} />
@@ -43,7 +43,7 @@ function Navigation({
       <button
         type="button"
         onClick={toggleSidebar}
-        className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100 cursor-pointer"
+          className="p-1 m-[4px] rounded flex items-center justify-center opacity-60 hover:opacity-100 cursor-pointer bg-transparent"
         aria-label="Toggle Sidebar"
       >
         <History size={16} />

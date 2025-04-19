@@ -115,8 +115,8 @@ function NoteEditor({
     if (syncAttempted && !appleNoteContent) {
       return (
         <p className="text-amber-800">
-          No content found. Please check your Apple Notes settings and make
-          sure the note exists.
+          No content found. Please check your Apple Notes settings and make sure
+          the note exists.
         </p>
       );
     }

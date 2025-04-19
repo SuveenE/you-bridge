@@ -48,7 +48,7 @@ function Sidebar({
                 <div className="font-normal opacity-70 flex items-center justify-between">
                   <div>{format(parseISO(note.date), 'EEE, MMM d, yyyy')}</div>
                   {isToday(parseISO(note.date)) && (
-                    <div className="text-xs bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">
+                    <div className="text-xs bg-lime-200 text-lime-800 px-2 py-0.5 rounded-lg">
                       Today
                     </div>
                   )}
