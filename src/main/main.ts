@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import setupAppleNotesHandlers from './appleNotes';
 
 class AppUpdater {
   constructor() {
@@ -30,6 +31,9 @@ ipcMain.on('ipc-example', async (event, arg) => {
   console.log(msgTemplate(arg));
   event.sender.send('ipc-example', msgTemplate('pong'));
 });
+
+// Setup Apple Notes integration
+setupAppleNotesHandlers();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
