@@ -50,6 +50,7 @@ function NoteEditor({
     content: appleNoteContent,
     isLoading,
     error,
+    refetch,
   } = useAppleNotes(isTodayNote ? settings.noteName : '', {
     todayOnly: false, // Always fetch entire note regardless of setting
   });
@@ -113,6 +114,11 @@ function NoteEditor({
       onChange(event);
     }
   }, [appleNoteContent, readOnly, isTodayNote, content, onChange]);
+
+  // Handle manual refresh when refresh icon is clicked
+  const handleManualRefresh = async () => {
+    await refetch();
+  };
 
   // Schedule end-of-day combination of Apple Notes with textarea content
   useEffect(() => {
@@ -192,14 +198,16 @@ function NoteEditor({
 
         <div className="flex space-x-2">
           {isTodayNote && !readOnly && (
-            <div
-              className="p-1.5 rounded-md bg-amber-200 text-amber-800"
-              title="Syncing with Apple Notes"
+            <button
+              type="button"
+              onClick={handleManualRefresh}
+              className="p-1.5 rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+              title="Manually sync with Apple Notes"
             >
               <RefreshCw
                 className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
               />
-            </div>
+            </button>
           )}
         </div>
       </div>

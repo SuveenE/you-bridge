@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Navigation from '../components/notes/Navigation';
 import Sidebar from '../components/notes/Sidebar';
 import NoteEditor from '../components/notes/NoteEditor';
+import { extractReadItems, addReadItems } from '../lib/readUtils';
 
 interface Note {
   date: string;
@@ -117,6 +118,12 @@ export default function Notes() {
 
       // Save to localStorage
       localStorage.setItem('notes', JSON.stringify(updatedNotes));
+
+      // Extract and save any read items
+      const readItems = extractReadItems(newContent);
+      if (readItems.length > 0) {
+        addReadItems(readItems);
+      }
     }
   };
 

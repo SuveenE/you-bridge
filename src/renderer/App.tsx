@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  Link,
 } from 'react-router-dom';
 import { format } from 'date-fns';
 import 'tldraw/tldraw.css';
@@ -11,6 +12,8 @@ import icon from '../../assets/icon.png';
 import './App.css';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
+import Reads from './pages/Reads';
+import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
 
 function Hello() {
@@ -71,12 +74,28 @@ function Hello() {
         A simple way to track your notes, todos, and reminders.
       </p>
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
-      {/* <Link
-        to="/notes"
-        className="px-3 py-1.5 mb-6 border border-gray-300 text-gray-700 rounded-sm hover:bg-gray-50 transition"
-      >
-        Notes
-      </Link> */}
+
+      <div className="flex space-x-4 mb-6 text-md">
+        <Link
+          to="/notes"
+          className="px-4 py-2 bg-amber-100 text-gray-700 rounded-md hover:bg-amber-200 transition-all shadow-sm font-medium"
+        >
+          Notes
+        </Link>
+        <Link
+          to="/reads"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium"
+        >
+          Reading List
+        </Link>
+        <Link
+          to="/watchlist"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium"
+        >
+          Watch List
+        </Link>
+      </div>
+
       <Calendar
         mode="single"
         selected={date}
@@ -105,6 +124,8 @@ export default function App() {
         <Route path="/" element={<Hello />} />
         <Route path="/home" element={<Home />} />
         <Route path="/notes" element={<Notes />} />
+        <Route path="/reads" element={<Reads />} />
+        <Route path="/watchlist" element={<WatchList />} />
       </Routes>
     </Router>
   );
