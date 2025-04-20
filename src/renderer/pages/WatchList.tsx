@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Home, RefreshCw } from 'lucide-react';
+import { Home, RefreshCw, Film } from 'lucide-react';
 import {
   getWatchItems,
   toggleWatchItem,
@@ -97,7 +97,10 @@ export default function WatchList() {
 
       <div className="flex flex-col items-center w-full max-w-4xl mx-auto pt-16 px-6 pb-6 h-screen">
         <div className="w-full max-w-xl items-center mb-6">
-          <h1 className="text-xl font-semibold mb-4 text-center">Watch List</h1>
+          <h1 className="text-md font-semibold mb-4 text-center flex items-center justify-center gap-2">
+            <Film className="h-5 w-5 text-amber-600" />
+            Watch List
+          </h1>
 
           <Tabs
             defaultValue="all"

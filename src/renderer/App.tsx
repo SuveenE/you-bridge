@@ -7,6 +7,7 @@ import {
   Link,
 } from 'react-router-dom';
 import { format } from 'date-fns';
+import { BookOpen, FileText, Film } from 'lucide-react';
 import 'tldraw/tldraw.css';
 import icon from '../../assets/icon.png';
 import './App.css';
@@ -75,24 +76,27 @@ function Hello() {
       </p>
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
 
-      <div className="flex space-x-4 mb-6 text-md">
+      <div className="flex space-x-4 mb-6">
         <Link
           to="/notes"
-          className="px-4 py-2 bg-amber-100 text-gray-700 rounded-md hover:bg-amber-200 transition-all shadow-sm font-medium"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          Notes
+          <FileText size={16} />
+          <span>Notes</span>
         </Link>
         <Link
           to="/reads"
-          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          Reading List
+          <BookOpen size={16} />
+          <span>Reading List</span>
         </Link>
         <Link
           to="/watchlist"
-          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          Watch List
+          <Film size={16} />
+          <span>Watch List</span>
         </Link>
       </div>
 
