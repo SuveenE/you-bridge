@@ -1,5 +1,6 @@
-import React, { JSX } from 'react';
+import { JSX } from 'react';
 import { format, parseISO, isToday } from 'date-fns';
+import { SquareChevronLeft } from 'lucide-react';
 
 interface Note {
   date: string;
@@ -19,9 +20,19 @@ function Sidebar({
 }: SidebarProps): JSX.Element {
   return (
     <div className="w-52 bg-gray-50 h-full overflow-y-auto border-r text-xs">
-      <div className="p-3">
-        <div className="text-sm font-normal mb-3 ml-2 opacity-70">
-          Previous Stacks
+      <div className="py-6 px-3">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm font-normal ml-2 opacity-70">
+            Previous Stacks
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
+            aria-label="Close Sidebar"
+          >
+            <SquareChevronLeft size={16} />
+          </button>
         </div>
         <div className="space-y-1">
           {notes
@@ -48,7 +59,7 @@ function Sidebar({
                 <div className="font-normal opacity-70 flex items-center justify-between">
                   <div>{format(parseISO(note.date), 'EEE, MMM d, yyyy')}</div>
                   {isToday(parseISO(note.date)) && (
-                    <div className="text-xs bg-lime-200 text-lime-800 px-2 py-0.5 rounded-lg">
+                    <div className="text-xs bg-lime-300 text-gray-900 px-2 py-0.5 rounded-lg">
                       Today
                     </div>
                   )}

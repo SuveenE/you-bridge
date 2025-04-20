@@ -34,11 +34,6 @@ export default function Notes() {
     saveSettings(name, todayOnly);
   };
 
-  const handleTodayOnlyChange = (value: boolean) => {
-    setTodayOnly(value);
-    saveSettings(appleNoteName, value);
-  };
-
   useEffect(() => {
     // Get date from URL query parameter if available
     const queryParams = new URLSearchParams(location.search);
@@ -143,8 +138,7 @@ export default function Notes() {
         toggleSidebar={toggleSidebar}
         appleNoteName={appleNoteName}
         onAppleNoteNameChange={handleAppleNoteNameChange}
-        todayOnly={todayOnly}
-        onTodayOnlyChange={handleTodayOnlyChange}
+        isSidebarOpen={isSidebarOpen}
       />
       {isSidebarOpen && (
         <Sidebar

@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -70,7 +69,6 @@ export function Settings({
             onClick={onSave}
             className="bg-lime-200 hover:bg-lime-300 text-black font-medium"
           >
-            {/* <Check className="mr-2 h-4 w-4" /> */}
             Save
           </Button>
         </DialogFooter>
