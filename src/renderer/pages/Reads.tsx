@@ -1,13 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { format, parseISO } from 'date-fns';
-import { CheckCircle, Circle, ArrowLeft, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
 import {
   getReadItems,
   toggleReadItem,
   ReadItem,
   extractReadsFromAllNotes,
 } from '../lib/readUtils';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '../components/ui/tabs';
+import ReadListItem from '../components/reads/ReadListItem';
+
+// Read items list component
+function ReadItemsList({
+  items,
+  onToggle,
+}: {
+  items: ReadItem[];
+  onToggle: (id: string) => void;
+}) {
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => (
+        <li key={item.id}>
+          <ReadListItem item={item} onToggle={onToggle} />
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function Reads() {
   const [readItems, setReadItems] = useState<ReadItem[]>([]);
@@ -38,17 +63,14 @@ export default function Reads() {
     setReadItems(updatedItems);
   };
 
-  // Filter items based on current filter
-  const filteredItems = readItems.filter((item) => {
-    if (filter === 'all') return true;
-    if (filter === 'done') return item.done;
-    if (filter === 'pending') return !item.done;
-    return true;
-  });
-
   // Count of items by status
   const pendingCount = readItems.filter((item) => !item.done).length;
   const doneCount = readItems.filter((item) => item.done).length;
+
+  // Filtered items based on current tab
+  const allItems = readItems;
+  const pendingItems = readItems.filter((item) => !item.done);
+  const doneItems = readItems.filter((item) => item.done);
 
   return (
     <div className="flex flex-col h-screen bg-white text-black">
@@ -63,7 +85,7 @@ export default function Reads() {
         <button
           type="button"
           onClick={loadReadItems}
-          className="p-1.5 rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+          className="p-1.5 rounded-md bg-amber-200 text-amber-800 hover:bg-amber-300 transition-colors"
           title="Scan all notes for reading items"
           disabled={isLoading}
         >
@@ -73,96 +95,91 @@ export default function Reads() {
         </button>
       </div>
 
-      <div className="flex flex-col items-center pt-16 px-6 pb-6 h-screen">
-        <div className="w-3/5 mb-6">
-          <h1 className="text-xl font-semibold mb-4">Reading List</h1>
+      <div className="flex flex-col items-center w-full max-w-4xl mx-auto pt-16 px-6 pb-6 h-screen">
+        <div className="w-full max-w-xl items-center mb-6">
+          <h1 className="text-xl font-semibold mb-4 text-center">
+            Reading List
+          </h1>
 
-          <div className="flex space-x-2 mb-4">
-            <button
-              type="button"
-              onClick={() => setFilter('all')}
-              className={`px-3 py-1 text-sm rounded-md ${
-                filter === 'all'
-                  ? 'bg-amber-200 text-amber-800'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-            >
-              All ({readItems.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('pending')}
-              className={`px-3 py-1 text-sm rounded-md ${
-                filter === 'pending'
-                  ? 'bg-amber-200 text-amber-800'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-            >
-              To Read ({pendingCount})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('done')}
-              className={`px-3 py-1 text-sm rounded-md ${
-                filter === 'done'
-                  ? 'bg-amber-200 text-amber-800'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-            >
-              Completed ({doneCount})
-            </button>
-          </div>
-        </div>
+          <Tabs
+            defaultValue="all"
+            onValueChange={(value) =>
+              setFilter(value as 'all' | 'done' | 'pending')
+            }
+            className="min-w-[600px]"
+          >
+            <TabsList className="bg-gray-100 gap-2 w-full flex justify-center">
+              <TabsTrigger
+                value="all"
+                className={
+                  filter === 'all' ? 'bg-amber-200 text-amber-800' : ''
+                }
+              >
+                All ({readItems.length})
+              </TabsTrigger>
+              <TabsTrigger
+                value="pending"
+                className={
+                  filter === 'pending' ? 'bg-amber-200 text-amber-800' : ''
+                }
+              >
+                To Read ({pendingCount})
+              </TabsTrigger>
+              <TabsTrigger
+                value="done"
+                className={
+                  filter === 'done' ? 'bg-amber-200 text-amber-800' : ''
+                }
+              >
+                Completed ({doneCount})
+              </TabsTrigger>
+            </TabsList>
 
-        <div className="w-3/5 flex-1 overflow-auto">
-          {filteredItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500">
-              <p>No reading items found</p>
-              <p className="text-sm mt-2">
-                Add items to your notes with &quot;Read:&quot; prefix
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-3">
-              {filteredItems.map((item) => (
-                <li
-                  key={item.id}
-                  className={`p-3 rounded-lg border ${
-                    item.done ? 'bg-amber-50' : 'bg-white'
-                  }`}
-                >
-                  <div className="flex items-start">
-                    <button
-                      type="button"
-                      onClick={() => handleToggle(item.id)}
-                      className="mt-1 mr-3 text-amber-600"
-                    >
-                      {item.done ? (
-                        <CheckCircle className="h-5 w-5" />
-                      ) : (
-                        <Circle className="h-5 w-5" />
-                      )}
-                    </button>
-                    <div className="flex-1">
-                      <p
-                        className={`${
-                          item.done
-                            ? 'line-through text-gray-500'
-                            : 'text-black'
-                        }`}
-                      >
-                        {item.text}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Added on{' '}
-                        {format(parseISO(item.dateAdded), 'MMM d, yyyy')}
-                      </p>
-                    </div>
+            <TabsContent value="all">
+              <div className="w-full min-h-[300px] flex-1 overflow-auto">
+                {allItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-60 text-gray-500">
+                    <p>No reading items found</p>
+                    <p className="text-sm mt-2">
+                      Add items to your notes with &quot;Read:&quot; prefix
+                    </p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
+                ) : (
+                  <ReadItemsList items={allItems} onToggle={handleToggle} />
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="pending">
+              <div className="w-full min-h-[300px] flex-1 overflow-auto">
+                {pendingItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-60 text-gray-500">
+                    <p>No pending reading items</p>
+                    <p className="text-sm mt-2">
+                      Add items to your notes with &quot;Read:&quot; prefix
+                    </p>
+                  </div>
+                ) : (
+                  <ReadItemsList items={pendingItems} onToggle={handleToggle} />
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="done">
+              <div className="w-full min-h-[300px] flex-1 overflow-auto">
+                {doneItems.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-60 text-gray-500">
+                    <p>No completed reading items</p>
+                    <p className="text-sm mt-2">
+                      Add items to your notes with &quot;Read:&quot; prefix
+                    </p>
+                  </div>
+                ) : (
+                  <ReadItemsList items={doneItems} onToggle={handleToggle} />
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

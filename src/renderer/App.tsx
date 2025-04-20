@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  Link,
 } from 'react-router-dom';
 import { format } from 'date-fns';
 import 'tldraw/tldraw.css';
@@ -73,21 +74,19 @@ function Hello() {
       </p>
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
 
-      <div className="flex space-x-2 mb-6">
-        <button
-          type="button"
-          onClick={() => navigate('/notes')}
-          className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-sm hover:bg-gray-50 transition"
+      <div className="flex space-x-4 mb-6 text-md">
+        <Link
+          to="/notes"
+          className="px-4 py-2 bg-amber-100 text-gray-700 rounded-md hover:bg-amber-200 transition-all shadow-sm font-medium"
         >
           Notes
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/reads')}
-          className="px-3 py-1.5 border border-gray-300 bg-amber-200 text-gray-700 rounded-sm hover:bg-amber-300 transition"
+        </Link>
+        <Link
+          to="/reads"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium"
         >
           Reading List
-        </button>
+        </Link>
       </div>
 
       <Calendar
