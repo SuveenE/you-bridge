@@ -2,75 +2,75 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, RefreshCw } from 'lucide-react';
 import {
-  getReadItems,
-  toggleReadItem,
-  ReadItem,
-  extractReadsFromAllNotes,
-} from '../lib/readUtils';
+  getWatchItems,
+  toggleWatchItem,
+  WatchItem,
+  extractWatchesFromAllNotes,
+} from '../lib/watchUtils';
 import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
 } from '../components/ui/tabs';
-import ReadListItem from '../components/reads/ReadListItem';
+import WatchListItem from '../components/watches/WatchListItem';
 
-// Read items list component
-function ReadItemsList({
+// Watch items list component
+function WatchItemsList({
   items,
   onToggle,
 }: {
-  items: ReadItem[];
+  items: WatchItem[];
   onToggle: (id: string) => void;
 }) {
   return (
     <ul className="space-y-3">
       {items.map((item) => (
         <li key={item.id}>
-          <ReadListItem item={item} onToggle={onToggle} />
+          <WatchListItem item={item} onToggle={onToggle} />
         </li>
       ))}
     </ul>
   );
 }
 
-export default function Reads() {
-  const [readItems, setReadItems] = useState<ReadItem[]>([]);
+export default function WatchList() {
+  const [watchItems, setWatchItems] = useState<WatchItem[]>([]);
   const [filter, setFilter] = useState<'all' | 'done' | 'pending'>('all');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Function to load read items and scan notes
-  const loadReadItems = () => {
+  // Function to load watch items and scan notes
+  const loadWatchItems = () => {
     setIsLoading(true);
 
-    // Scan all notes for potential read items
-    extractReadsFromAllNotes();
+    // Scan all notes for potential watch items
+    extractWatchesFromAllNotes();
 
     // Then get the updated list with any items that were found
-    const allItems = getReadItems();
-    setReadItems(allItems);
+    const allItems = getWatchItems();
+    setWatchItems(allItems);
     setIsLoading(false);
   };
 
-  // Load read items from localStorage and scan all notes for reads
+  // Load watch items from localStorage and scan all notes for watches
   useEffect(() => {
-    loadReadItems();
+    loadWatchItems();
   }, []);
 
-  // Handle toggling a read item's done status
+  // Handle toggling a watch item's done status
   const handleToggle = (id: string) => {
-    const updatedItems = toggleReadItem(id);
-    setReadItems(updatedItems);
+    const updatedItems = toggleWatchItem(id);
+    setWatchItems(updatedItems);
   };
 
   // Count of items by status
-  const pendingCount = readItems.filter((item) => !item.done).length;
-  const doneCount = readItems.filter((item) => item.done).length;
+  const pendingCount = watchItems.filter((item) => !item.done).length;
+  const doneCount = watchItems.filter((item) => item.done).length;
 
   // Filtered items based on current tab
-  const allItems = readItems;
-  const pendingItems = readItems.filter((item) => !item.done);
-  const doneItems = readItems.filter((item) => item.done);
+  const allItems = watchItems;
+  const pendingItems = watchItems.filter((item) => !item.done);
+  const doneItems = watchItems.filter((item) => item.done);
 
   return (
     <div className="flex flex-col h-screen bg-white text-black">
@@ -84,9 +84,9 @@ export default function Reads() {
         </Link>
         <button
           type="button"
-          onClick={loadReadItems}
+          onClick={loadWatchItems}
           className="p-1.5 rounded-md bg-amber-200 text-amber-800 hover:bg-amber-300 transition-colors"
-          title="Scan all notes for reading items"
+          title="Scan all notes for watching items"
           disabled={isLoading}
         >
           <RefreshCw
@@ -97,9 +97,7 @@ export default function Reads() {
 
       <div className="flex flex-col items-center w-full max-w-4xl mx-auto pt-16 px-6 pb-6 h-screen">
         <div className="w-full max-w-xl items-center mb-6">
-          <h1 className="text-xl font-semibold mb-4 text-center">
-            Reading List
-          </h1>
+          <h1 className="text-xl font-semibold mb-4 text-center">Watch List</h1>
 
           <Tabs
             defaultValue="all"
@@ -115,7 +113,7 @@ export default function Reads() {
                   filter === 'all' ? 'bg-amber-200 text-amber-800' : ''
                 }
               >
-                All ({readItems.length})
+                All ({watchItems.length})
               </TabsTrigger>
               <TabsTrigger
                 value="pending"
@@ -123,7 +121,7 @@ export default function Reads() {
                   filter === 'pending' ? 'bg-amber-200 text-amber-800' : ''
                 }
               >
-                To Read ({pendingCount})
+                To Watch ({pendingCount})
               </TabsTrigger>
               <TabsTrigger
                 value="done"
@@ -139,13 +137,13 @@ export default function Reads() {
               <div className="w-full min-h-[300px] flex-1 overflow-auto">
                 {allItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-60 text-gray-500">
-                    <p>No reading items found</p>
+                    <p>No watching items found</p>
                     <p className="text-sm mt-2">
-                      Add items to your notes with &quot;Read:&quot; prefix
+                      Add items to your notes with &quot;Watch:&quot; prefix
                     </p>
                   </div>
                 ) : (
-                  <ReadItemsList items={allItems} onToggle={handleToggle} />
+                  <WatchItemsList items={allItems} onToggle={handleToggle} />
                 )}
               </div>
             </TabsContent>
@@ -154,13 +152,16 @@ export default function Reads() {
               <div className="w-full min-h-[300px] flex-1 overflow-auto">
                 {pendingItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-60 text-gray-500">
-                    <p>No pending reading items</p>
+                    <p>No pending watching items</p>
                     <p className="text-sm mt-2">
-                      Add items to your notes with &quot;Read:&quot; prefix
+                      Add items to your notes with &quot;Watch:&quot; prefix
                     </p>
                   </div>
                 ) : (
-                  <ReadItemsList items={pendingItems} onToggle={handleToggle} />
+                  <WatchItemsList
+                    items={pendingItems}
+                    onToggle={handleToggle}
+                  />
                 )}
               </div>
             </TabsContent>
@@ -169,13 +170,13 @@ export default function Reads() {
               <div className="w-full min-h-[300px] flex-1 overflow-auto">
                 {doneItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-60 text-gray-500">
-                    <p>No completed reading items</p>
+                    <p>No completed watching items</p>
                     <p className="text-sm mt-2">
-                      Add items to your notes with &quot;Read:&quot; prefix
+                      Add items to your notes with &quot;Watch:&quot; prefix
                     </p>
                   </div>
                 ) : (
-                  <ReadItemsList items={doneItems} onToggle={handleToggle} />
+                  <WatchItemsList items={doneItems} onToggle={handleToggle} />
                 )}
               </div>
             </TabsContent>

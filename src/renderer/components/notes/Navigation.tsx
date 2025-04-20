@@ -46,12 +46,6 @@ function Navigation({
         >
           <Home size={16} />
         </Link>
-        <Link
-          to="/reads"
-          className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
-        >
-          <Book size={16} />
-        </Link>
         <button
           type="button"
           onClick={() => setShowSettings(true)}

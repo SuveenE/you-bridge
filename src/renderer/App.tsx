@@ -13,6 +13,7 @@ import './App.css';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
 import Reads from './pages/Reads';
+import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
 
 function Hello() {
@@ -87,6 +88,12 @@ function Hello() {
         >
           Reading List
         </Link>
+        <Link
+          to="/watchlist"
+          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium"
+        >
+          Watch List
+        </Link>
       </div>
 
       <Calendar
@@ -118,6 +125,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/reads" element={<Reads />} />
+        <Route path="/watchlist" element={<WatchList />} />
       </Routes>
     </Router>
   );
