@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Settings, History } from 'lucide-react';
+import { Home, Settings, History, Book } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import NotesSettings from './Settings';
 
@@ -45,6 +45,12 @@ function Navigation({
           className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
         >
           <Home size={16} />
+        </Link>
+        <Link
+          to="/reads"
+          className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
+        >
+          <Book size={16} />
         </Link>
         <button
           type="button"

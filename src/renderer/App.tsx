@@ -11,6 +11,7 @@ import icon from '../../assets/icon.png';
 import './App.css';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
+import Reads from './pages/Reads';
 import { Calendar } from './components/ui/calendar';
 
 function Hello() {
@@ -71,12 +72,24 @@ function Hello() {
         A simple way to track your notes, todos, and reminders.
       </p>
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
-      {/* <Link
-        to="/notes"
-        className="px-3 py-1.5 mb-6 border border-gray-300 text-gray-700 rounded-sm hover:bg-gray-50 transition"
-      >
-        Notes
-      </Link> */}
+
+      <div className="flex space-x-2 mb-6">
+        <button
+          type="button"
+          onClick={() => navigate('/notes')}
+          className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-sm hover:bg-gray-50 transition"
+        >
+          Notes
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/reads')}
+          className="px-3 py-1.5 border border-gray-300 bg-amber-200 text-gray-700 rounded-sm hover:bg-amber-300 transition"
+        >
+          Reading List
+        </button>
+      </div>
+
       <Calendar
         mode="single"
         selected={date}
@@ -105,6 +118,7 @@ export default function App() {
         <Route path="/" element={<Hello />} />
         <Route path="/home" element={<Home />} />
         <Route path="/notes" element={<Notes />} />
+        <Route path="/reads" element={<Reads />} />
       </Routes>
     </Router>
   );
