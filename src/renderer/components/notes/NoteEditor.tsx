@@ -1,6 +1,12 @@
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { JSX, useEffect, useRef, useState, useCallback } from 'react';
 import { Lock, RefreshCw } from 'lucide-react';
-import { format, parseISO, isToday } from 'date-fns';
+import {
+  format,
+  parseISO,
+  isToday,
+  endOfDay,
+  differenceInMilliseconds,
+} from 'date-fns';
 import { useAppleNotes } from '../../../hooks/useAppleNotes';
 
 interface NoteEditorProps {
@@ -17,7 +23,7 @@ function NoteEditor({
   readOnly = false,
 }: NoteEditorProps): JSX.Element {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [syncAttempted, setSyncAttempted] = useState(false);
+  const [autoSyncScheduled, setAutoSyncScheduled] = useState(false);
 
   // Check if the currently viewed note is from today
   const isTodayNote = date ? isToday(parseISO(date)) : false;
@@ -44,7 +50,6 @@ function NoteEditor({
     content: appleNoteContent,
     isLoading,
     error,
-    refetch,
   } = useAppleNotes(isTodayNote ? settings.noteName : '', {
     todayOnly: false, // Always fetch entire note regardless of setting
   });
@@ -60,47 +65,80 @@ function NoteEditor({
     adjustHeight();
   }, [content]);
 
-  // Handle importing Apple Notes content into the editor
-  const importFromAppleNotes = () => {
-    setSyncAttempted(true);
+  // Helper function to parse the Apple Notes content to extract only today's content
+  const parseNoteContent = (noteText: string) => {
+    // Get today's date in the format used in notes (DD/MM)
+    const today = new Date();
+    const todayFormatted = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}`;
 
-    // Force a refetch of Apple Notes content
-    if (refetch) {
-      refetch();
-    }
+    // Split the content by lines
+    const lines = noteText.split('\n');
+    let currentDate = '';
+    const todaysContentLines: string[] = [];
+    let captureContent = false;
 
+    lines.forEach((line) => {
+      // Check if the line is a date marker (like "20/04")
+      const dateMatch = line.match(/^\d{2}\/\d{2}$/);
+
+      if (dateMatch) {
+        currentDate = line;
+        // Start capturing content if this is today's date
+        captureContent = currentDate === todayFormatted;
+        return;
+      }
+
+      // If we're in the section for today's date, capture the content
+      if (captureContent && line.trim() !== '') {
+        todaysContentLines.push(line);
+      }
+    });
+
+    return todaysContentLines.join('\n');
+  };
+
+  // Function to combine Apple Notes content with textarea content
+  const combineNotesContent = useCallback(() => {
     if (appleNoteContent && !readOnly && isTodayNote) {
-      // Append the Apple Notes content to existing content
+      const todayContent = parseNoteContent(appleNoteContent);
+
+      // Combine the parsed content with existing content
       const updatedContent = content
-        ? `${content}\n\n${appleNoteContent}`
-        : appleNoteContent;
+        ? `${content}\n\n---\nApple Notes content:\n${todayContent}`
+        : todayContent;
 
       const event = {
         target: { value: updatedContent },
       } as React.ChangeEvent<HTMLTextAreaElement>;
       onChange(event);
     }
-  };
+  }, [appleNoteContent, readOnly, isTodayNote, content, onChange]);
+
+  // Schedule end-of-day combination of Apple Notes with textarea content
+  useEffect(() => {
+    if (isTodayNote && !readOnly && !autoSyncScheduled) {
+      const today = new Date();
+      const endDay = endOfDay(today);
+      const timeUntilEndOfDay = differenceInMilliseconds(endDay, today);
+
+      // Set a timeout to combine notes at the end of the day
+      const timer = setTimeout(() => {
+        combineNotesContent();
+      }, timeUntilEndOfDay);
+
+      setAutoSyncScheduled(true);
+
+      // Clean up the timer when component unmounts
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+    // Return a no-op cleanup function when the condition isn't met
+    return () => {};
+  }, [isTodayNote, readOnly, autoSyncScheduled, combineNotesContent]);
 
   // Format the date to include day of week
   const formattedDate = date ? format(parseISO(date), 'EEEE, MMM d, yyyy') : '';
-
-  // Button class based on state
-  const getSyncButtonClass = (): string => {
-    if (isLoading) {
-      return 'bg-gray-100 text-gray-400';
-    }
-
-    if (appleNoteContent) {
-      return 'bg-lime-200 text-gray-800 hover:bg-lime-300';
-    }
-
-    if (syncAttempted && !appleNoteContent) {
-      return 'bg-red-100 text-red-800 hover:bg-red-200';
-    }
-
-    return 'bg-lime-200 text-gray-800 hover:bg-lime-300';
-  };
 
   // Render note content based on state
   const renderNoteContent = () => {
@@ -112,7 +150,7 @@ function NoteEditor({
       return <p className="text-red-500">Error: {error.message}</p>;
     }
 
-    if (syncAttempted && !appleNoteContent) {
+    if (!appleNoteContent) {
       return (
         <p className="text-amber-800">
           No content found. Please check your Apple Notes settings and make sure
@@ -121,14 +159,20 @@ function NoteEditor({
       );
     }
 
+    // Get today's content for the preview
+    const todayContentPreview = appleNoteContent
+      ? parseNoteContent(appleNoteContent)
+      : '';
+    const previewContent = todayContentPreview || appleNoteContent;
+
     // Display the Apple Note content with proper whitespace handling
     return (
       <div>
         <p className="text-xs text-gray-500 mb-2">
-          Apple Note preview (click sync button to import):
+          Apple Note preview (will be combined with your notes at end of day):
         </p>
         <div className="apple-note-content whitespace-pre-line text-sm font-sans overflow-auto">
-          {appleNoteContent}
+          {previewContent}
         </div>
       </div>
     );
@@ -148,22 +192,19 @@ function NoteEditor({
 
         <div className="flex space-x-2">
           {isTodayNote && !readOnly && (
-            <button
-              type="button"
-              onClick={importFromAppleNotes}
-              disabled={isLoading}
-              className={`p-1.5 rounded-md ${getSyncButtonClass()}`}
-              title="Sync with Apple Notes"
+            <div
+              className="p-1.5 rounded-md bg-lime-200 text-gray-800"
+              title="Syncing with Apple Notes"
             >
               <RefreshCw
                 className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
               />
-            </button>
+            </div>
           )}
         </div>
       </div>
 
-      {(syncAttempted || appleNoteContent) && isTodayNote && !readOnly && (
+      {appleNoteContent && isTodayNote && !readOnly && (
         <div className="w-3/5 mb-4 p-3 text-sm border rounded-lg bg-amber-50 max-h-60 overflow-auto">
           {renderNoteContent()}
         </div>
