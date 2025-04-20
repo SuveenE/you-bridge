@@ -70,30 +70,30 @@ function Hello() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800">
-      <p className="text-lg font-bold mb-2">Stack</p>
+      <p className="text-lg font-bold my-2">NoteStack</p>
+
+      <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
       <p className="text-sm text-gray-500 mb-4">
         A simple way to track your notes, todos, and reminders.
       </p>
-      <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
-
-      <div className="flex space-x-4 mb-6">
+      <div className="flex flex-row mb-6">
         <Link
           to="/notes"
-          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium flex items-center gap-2"
+          className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
           <FileText size={16} />
           <span>Notes</span>
         </Link>
         <Link
           to="/reads"
-          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium flex items-center gap-2"
+          className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
           <BookOpen size={16} />
           <span>Reading List</span>
         </Link>
         <Link
           to="/watchlist"
-          className="px-4 py-2 bg-amber-200 text-gray-700 rounded-md hover:bg-amber-300 transition-all shadow-sm font-medium flex items-center gap-2"
+          className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
           <Film size={16} />
           <span>Watch List</span>
