@@ -67,7 +67,7 @@ export function Settings({
           <Button
             type="button"
             onClick={onSave}
-            className="bg-lime-200 hover:bg-lime-300 text-black font-medium"
+            className="bg-amber-200 hover:bg-amber-300 text-gray-900 font-medium"
           >
             Save
           </Button>

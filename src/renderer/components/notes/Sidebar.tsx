@@ -19,7 +19,7 @@ function Sidebar({
   setIsSidebarOpen,
 }: SidebarProps): JSX.Element {
   return (
-    <div className="w-52 bg-gray-50 h-full overflow-y-auto border-r text-xs">
+    <div className="w-52 bg-amber-50 h-full overflow-y-auto border-r text-xs">
       <div className="py-6 px-3">
         <div className="flex items-center justify-between mb-3">
           <div className="text-sm font-normal ml-2 opacity-70">
@@ -42,7 +42,7 @@ function Sidebar({
             .map((note) => (
               <div
                 key={note.date}
-                className="w-full text-left p-2 hover:bg-gray-100 rounded cursor-pointer"
+                className="w-full text-left p-2 hover:bg-amber-100 rounded cursor-pointer"
                 onClick={() => {
                   selectNote(note.date, note.content);
                   setIsSidebarOpen(false);
@@ -59,7 +59,7 @@ function Sidebar({
                 <div className="font-normal opacity-70 flex items-center justify-between">
                   <div>{format(parseISO(note.date), 'EEE, MMM d, yyyy')}</div>
                   {isToday(parseISO(note.date)) && (
-                    <div className="text-xs bg-lime-300 text-gray-900 px-2 py-0.5 rounded-lg">
+                    <div className="text-xs bg-amber-300 text-amber-900 px-2 py-0.5 rounded-lg">
                       Today
                     </div>
                   )}

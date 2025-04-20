@@ -193,7 +193,7 @@ function NoteEditor({
         <div className="flex space-x-2">
           {isTodayNote && !readOnly && (
             <div
-              className="p-1.5 rounded-md bg-lime-200 text-gray-800"
+              className="p-1.5 rounded-md bg-amber-200 text-amber-800"
               title="Syncing with Apple Notes"
             >
               <RefreshCw
@@ -213,7 +213,7 @@ function NoteEditor({
       <textarea
         ref={textareaRef}
         className={`p-3 text-black rounded-lg w-3/5 focus:outline-none text-sm resize-none ${
-          readOnly ? 'bg-gray-100' : ''
+          readOnly ? 'bg-amber-50' : ''
         }`}
         value={content}
         onChange={(e) => {
