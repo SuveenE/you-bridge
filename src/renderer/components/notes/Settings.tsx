@@ -57,21 +57,20 @@ export function Settings({
           </div>
         </form>
 
-        <DialogFooter className="sm:justify-between flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="text-gray-700 border-lime-200 bg-gray-300 hover:bg-lime-200/20"
-          >
-            Cancel
-          </Button>
+        <p className="text-xs text-gray-500">
+          When typing notes for a particular day start with a date marker. e.g.
+          <span className="font-bold"> 20/04</span> and add your notes from the
+          next new line onwards.
+        </p>
+        {/* TODO: ADD support for notes in multiple years and add previous years */}
+
+        <DialogFooter className="sm:justify-end flex gap-2">
           <Button
             type="button"
             onClick={onSave}
-            className="bg-lime-200 hover:bg-lime-300 text-gray-800"
+            className="bg-lime-200 hover:bg-lime-300 text-black font-medium"
           >
-            <Check className="mr-2 h-4 w-4" />
+            {/* <Check className="mr-2 h-4 w-4" /> */}
             Save
           </Button>
         </DialogFooter>
