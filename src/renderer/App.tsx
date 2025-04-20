@@ -116,7 +116,21 @@ function Hello() {
           pastWithoutNote: { backgroundColor: '#fca5a5' }, // Brighter red for past days without notes
         }}
       />
-      <div className="text-sm text-gray-500 my-8">By Suveen</div>
+      <div className="text-sm text-gray-500 my-8">
+        <span>
+          <a
+            href="https://x.com/SuveenE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-gray-800"
+          >
+            By{' '}
+            <span className="text-amber-600 hover:text-amber-800 hover:underline">
+              Suveen
+            </span>
+          </a>
+        </span>
+      </div>
     </div>
   );
 }
