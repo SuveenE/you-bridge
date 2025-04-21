@@ -13,7 +13,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '../components/ui/tabs';
-import WatchListItem from '../components/watches/WatchListItem';
+import WatchListItem from '../components/watches/watch-list-item';
 
 // Watch items list component
 function WatchItemsList({

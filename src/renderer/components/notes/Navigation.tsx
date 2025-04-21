@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Home, Settings, History, Book } from 'lucide-react';
+import { Home, Settings, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import NotesSettings from './Settings';
+import NotesSettings from '../home/settings';
 
 interface NavigationProps {
   toggleSidebar: () => void;

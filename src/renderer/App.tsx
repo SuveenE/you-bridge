@@ -16,6 +16,7 @@ import Notes from './pages/Notes';
 import Reads from './pages/Reads';
 import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
+import HelpDialog from './components/home/help-dialog';
 
 function Hello() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -69,7 +70,11 @@ function Hello() {
   ).filter(Boolean) as Date[];
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800">
+    <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
+      <div className="absolute top-4 right-4">
+        <HelpDialog />
+      </div>
+
       <p className="text-lg font-bold my-2">NoteStack</p>
 
       <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />

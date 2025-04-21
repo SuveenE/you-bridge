@@ -13,7 +13,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '../components/ui/tabs';
-import ReadListItem from '../components/reads/ReadListItem';
+import ReadListItem from '../components/reads/read-list-item';
 
 // Read items list component
 function ReadItemsList({

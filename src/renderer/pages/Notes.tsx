@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { useLocation } from 'react-router-dom';
 import Navigation from '../components/notes/Navigation';
 import Sidebar from '../components/notes/Sidebar';
-import NoteEditor from '../components/notes/NoteEditor';
+import NoteEditor from '../components/notes/note-editor';
 import { extractReadItems, addReadItems } from '../lib/readUtils';
 
 interface Note {
