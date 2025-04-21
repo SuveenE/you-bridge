@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Home, Settings, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import NotesSettings from '../home/settings';
+import HelpDialog from '../home/help-dialog';
 
 interface NavigationProps {
   toggleSidebar: () => void;
@@ -46,22 +47,7 @@ function Navigation({
         >
           <Home size={16} />
         </Link>
-        <button
-          type="button"
-          onClick={() => setShowSettings(true)}
-          className="p-1 m-[4px] rounded flex items-center justify-center opacity-60 hover:opacity-100 bg-transparent"
-          aria-label="Apple Notes Settings"
-        >
-          <Settings size={16} />
-        </button>
-
-        <NotesSettings
-          open={showSettings}
-          onOpenChange={setShowSettings}
-          noteName={appleNoteName}
-          onNoteNameChange={onAppleNoteNameChange}
-          onSave={saveSettings}
-        />
+        <HelpDialog initialTab="settings" iconType="settings" />
       </div>
     </>
   );

@@ -72,7 +72,7 @@ function Hello() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
       <div className="absolute top-4 right-4">
-        <HelpDialog />
+        <HelpDialog initialTab="howto" iconType="help" />
       </div>
 
       <p className="text-lg font-bold my-2">NoteStack</p>
