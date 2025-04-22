@@ -22,16 +22,16 @@ function Sidebar({
     <div className="w-52 bg-amber-50 h-full overflow-y-auto border-r text-xs">
       <div className="py-6 px-3">
         <div className="flex items-center justify-between mb-3">
-          <div className="text-sm font-normal ml-2 opacity-70">
+          <div className="text-sm font-bold ml-2 text-gray-800">
             Previous Stacks
           </div>
           <button
             type="button"
             onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
+            className="p-1 rounded flex items-center justify-center text-gray-800 hover:text-amber-600"
             aria-label="Close Sidebar"
           >
-            <SquareChevronLeft size={16} />
+            <SquareChevronLeft size={18} strokeWidth={2.5} />
           </button>
         </div>
         <div className="space-y-1">

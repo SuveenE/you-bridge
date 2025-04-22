@@ -151,16 +151,16 @@ function NoteEditor({
   // Render note content based on state
   const renderNoteContent = () => {
     if (isLoading) {
-      return <p className="text-gray-500">Loading notes...</p>;
+      return <p className="text-gray-600">Loading notes...</p>;
     }
 
     if (error) {
-      return <p className="text-red-500">Error: {error.message}</p>;
+      return <p className="text-red-600">Error: {error.message}</p>;
     }
 
     if (!appleNoteContent) {
       return (
-        <p className="text-amber-800">
+        <p className="text-gray-700">
           No content found. Please check your Apple Notes settings and make sure
           the note exists.
         </p>
@@ -176,10 +176,10 @@ function NoteEditor({
     // Display the Apple Note content with proper whitespace handling
     return (
       <div>
-        <p className="text-xs text-gray-500 mb-2">
+        <p className="text-xs text-gray-600 mb-2 font-medium">
           Apple Note preview (will be combined with your notes at end of day):
         </p>
-        <div className="apple-note-content whitespace-pre-line text-sm font-sans overflow-auto">
+        <div className="apple-note-content whitespace-pre-line text-sm text-gray-800 overflow-auto">
           {previewContent}
         </div>
       </div>
@@ -187,13 +187,13 @@ function NoteEditor({
   };
 
   return (
-    <div className="flex flex-col items-center h-screen p-6 text-black flex-1">
-      <div className="flex flex-row justify-between text-sm font-normal w-3/5 mb-3">
-        <div className="flex items-center opacity-60">
-          <p>{formattedDate}</p>
+    <div className="flex flex-col items-center h-screen p-6 text-gray-800 flex-1 bg-white pt-16">
+      <div className="flex flex-row justify-between text-sm w-3/5 mb-4">
+        <div className="flex items-center">
+          <p className="font-bold text-gray-800">{formattedDate}</p>
           {readOnly && (
-            <span className="ml-2 text-amber-600">
-              <Lock className="h-4 w-4" />
+            <span className="ml-2 text-gray-600">
+              <Lock size={18} strokeWidth={2.5} />
             </span>
           )}
         </div>
@@ -203,11 +203,13 @@ function NoteEditor({
             <button
               type="button"
               onClick={handleManualRefresh}
-              className="p-1.5 rounded-md bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+              className="p-1.5 rounded-md bg-amber-200 text-gray-900 hover:bg-amber-300 transition-colors font-medium"
               title="Manually sync with Apple Notes"
             >
               <RefreshCw
-                className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+                className={`${isLoading ? 'animate-spin' : ''}`}
+                size={18}
+                strokeWidth={2.5}
               />
             </button>
           )}
@@ -215,15 +217,15 @@ function NoteEditor({
       </div>
 
       {appleNoteContent && isTodayNote && !readOnly && (
-        <div className="w-3/5 mb-4 p-3 text-sm border rounded-lg bg-amber-50 max-h-60 overflow-auto">
+        <div className="w-3/5 mb-4 p-4 text-sm border border-amber-200 rounded-md bg-white shadow-sm max-h-60 overflow-auto">
           {renderNoteContent()}
         </div>
       )}
 
       <textarea
         ref={textareaRef}
-        className={`p-3 text-black rounded-lg w-3/5 focus:outline-none text-sm resize-none ${
-          readOnly ? 'bg-amber-50' : ''
+        className={`p-4 text-gray-900 rounded-md w-3/5 focus:outline-none focus:border-transparent text-sm resize-none ${
+          readOnly ? 'bg-amber-50 border-amber-200' : ''
         }`}
         value={content}
         onChange={(e) => {

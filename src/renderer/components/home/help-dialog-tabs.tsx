@@ -83,10 +83,10 @@ export function SettingsTab({
   saveSettings: () => void;
 }) {
   return (
-    <div className="mt-4 space-y-5">
-      <div className="text-left">
-        <h3 className="text-sm font-bold text-gray-700">Apple Note Name</h3>
-        <p className="text-xs text-gray-500 mt-1">
+    <div className="mt-4 space-y-4 text-left">
+      <div>
+        <h3 className="font-bold text-gray-800">Apple Note Name</h3>
+        <p className="text-sm text-gray-600 mt-1">
           Enter the name of your Apple Note to fetch
         </p>
         <input
@@ -100,11 +100,14 @@ export function SettingsTab({
         />
       </div>
 
-      <p className="text-xs text-gray-500">
-        When typing notes for a particular day start with a date marker. e.g.{' '}
-        <span className="font-bold"> 20/04</span> and add your notes from the
-        next new line onwards.
-      </p>
+      <div>
+        <h3 className="font-bold text-gray-800">Note Format</h3>
+        <p className="text-sm text-gray-600 mt-1">
+          When typing notes for a particular day start with a date marker. e.g.{' '}
+          <span className="font-bold"> 20/04</span> and add your notes from the
+          next new line onwards.
+        </p>
+      </div>
 
       <div className="flex justify-end items-center">
         {saveSuccess && (

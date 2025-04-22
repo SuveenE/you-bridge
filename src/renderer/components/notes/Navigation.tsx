@@ -16,14 +16,14 @@ function Navigation({
     <>
       {/* Left-side history button - only show when sidebar is closed */}
       {!isSidebarOpen && (
-        <div className="fixed top-3 left-3 z-10 text-xs">
+        <div className="fixed top-3 left-3 z-10 gap-2 text-xs">
           <button
             type="button"
             onClick={toggleSidebar}
-            className="p-1 m-[4px] rounded flex items-center justify-center opacity-60 hover:opacity-100 bg-transparent"
+            className="p-1.5 rounded-md flex items-center justify-center text-gray-800 hover:text-amber-600 m-[10px] bg-transparent shadow-none"
             aria-label="Toggle Sidebar"
           >
-            <History size={16} />
+            <History size={18} strokeWidth={2.5} />
           </button>
         </div>
       )}
@@ -32,9 +32,9 @@ function Navigation({
       <div className="fixed top-3 right-3 flex gap-2 z-10 text-xs">
         <Link
           to="/"
-          className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
+          className="p-1.5 rounded-md flex items-center justify-center text-gray-800 hover:text-amber-600"
         >
-          <Home size={16} />
+          <Home size={18} strokeWidth={2.5} />
         </Link>
         <HelpDialog initialTab="settings" iconType="settings" />
       </div>

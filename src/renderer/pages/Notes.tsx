@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useLocation } from 'react-router-dom';
-import Navigation from '../components/notes/Navigation';
-import Sidebar from '../components/notes/Sidebar';
+import Navigation from '../components/notes/navigation';
+import Sidebar from '../components/notes/sidebar';
 import NoteEditor from '../components/notes/note-editor';
 import { extractReadItems, addReadItems } from '../lib/readUtils';
 
@@ -128,7 +128,7 @@ export default function Notes() {
   const isReadOnly = selectedDate !== todayString;
 
   return (
-    <div className="flex w-screen h-screen text-black bg-white">
+    <div className="flex w-screen h-screen text-gray-800 bg-white">
       <Navigation toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       {isSidebarOpen && (
         <Sidebar
