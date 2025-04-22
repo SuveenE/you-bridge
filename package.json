@@ -1,5 +1,5 @@
 {
-  "name": "goat",
+  "name": "NoteStack",
   "description": "By Suveen.",
   "license": "MIT",
   "author": {
@@ -165,8 +165,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "Goat",
-    "appId": "goat.suveen",
+    "productName": "NoteStack",
+    "appId": "notestack.suveen",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -205,7 +205,7 @@
       "format": "ULFO"
     },
     "win": {
-      "publisherName": "Goat",
+      "publisherName": "NoteStack",
       "target": [
         {
           "target": "nsis",

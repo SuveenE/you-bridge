@@ -1,4 +1,4 @@
-The goat
+The NoteStack
 
 # install
 
