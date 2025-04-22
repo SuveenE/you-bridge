@@ -71,7 +71,7 @@ function Hello() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
-      <div className="absolute top-4 right-4">
+      <div className="fixed top-6 right-6 z-10">
         <HelpDialog initialTab="howto" iconType="help" />
       </div>
 
@@ -130,7 +130,7 @@ function Hello() {
             className="text-gray-600 hover:text-gray-800"
           >
             By{' '}
-            <span className="text-amber-600 hover:text-amber-800 hover:underline">
+            <span className="text-gray-800 hover:text-gray-800 underline">
               Suveen
             </span>
           </a>
