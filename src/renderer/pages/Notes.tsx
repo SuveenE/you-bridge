@@ -23,18 +23,6 @@ export default function Notes() {
   const todayString = format(today, 'yyyy-MM-dd');
   const location = useLocation();
 
-  // Save Apple Notes settings
-  const saveSettings = (noteName: string, onlyToday: boolean) => {
-    const settings = { noteName, todayOnly: onlyToday };
-    localStorage.setItem('appleNotesSettings', JSON.stringify(settings));
-  };
-
-  // Handle Apple Notes settings changes
-  const handleAppleNoteNameChange = (name: string) => {
-    setAppleNoteName(name);
-    saveSettings(name, todayOnly);
-  };
-
   useEffect(() => {
     // Get date from URL query parameter if available
     const queryParams = new URLSearchParams(location.search);
@@ -141,12 +129,7 @@ export default function Notes() {
 
   return (
     <div className="flex w-screen h-screen text-black bg-white">
-      <Navigation
-        toggleSidebar={toggleSidebar}
-        appleNoteName={appleNoteName}
-        onAppleNoteNameChange={handleAppleNoteNameChange}
-        isSidebarOpen={isSidebarOpen}
-      />
+      <Navigation toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       {isSidebarOpen && (
         <Sidebar
           notes={notes}

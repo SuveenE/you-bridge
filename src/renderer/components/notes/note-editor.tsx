@@ -30,7 +30,7 @@ function NoteEditor({
 
   // Get Apple Notes settings from localStorage
   const [settings, setSettings] = useState({
-    noteName: 'Suveen Daily Notes',
+    noteName: 'Your Note Name',
     todayOnly: true,
   });
 
@@ -54,6 +54,8 @@ function NoteEditor({
   } = useAppleNotes(isTodayNote ? settings.noteName : '', {
     todayOnly: false, // Always fetch entire note regardless of setting
   });
+
+  console.log('appleNoteContent', appleNoteContent);
 
   const adjustHeight = () => {
     if (textareaRef.current) {

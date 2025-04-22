@@ -1,28 +1,17 @@
-import React, { useState } from 'react';
-import { Home, Settings, History } from 'lucide-react';
+import React from 'react';
+import { Home, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import NotesSettings from '../home/settings';
 import HelpDialog from '../home/help-dialog';
 
 interface NavigationProps {
   toggleSidebar: () => void;
-  appleNoteName: string;
-  onAppleNoteNameChange: (name: string) => void;
   isSidebarOpen: boolean;
 }
 
 function Navigation({
   toggleSidebar,
-  appleNoteName,
-  onAppleNoteNameChange,
   isSidebarOpen,
 }: NavigationProps): React.JSX.Element {
-  const [showSettings, setShowSettings] = useState(false);
-
-  const saveSettings = () => {
-    setShowSettings(false);
-  };
-
   return (
     <>
       {/* Left-side history button - only show when sidebar is closed */}
