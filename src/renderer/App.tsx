@@ -17,6 +17,7 @@ import Reads from './pages/Reads';
 import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
 import HelpDialog from './components/home/help-dialog';
+import WelcomeDialog from './components/home/welcome-dialog';
 
 // Key for storing start date in localStorage
 const START_DATE_KEY = 'note_start_date';
@@ -140,6 +141,7 @@ function Hello() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
+      <WelcomeDialog />
       <div className="fixed top-6 right-6 z-10">
         <HelpDialog initialTab="howto" iconType="help" />
       </div>

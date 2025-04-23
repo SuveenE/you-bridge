@@ -85,7 +85,7 @@ function HelpDialogContent({
 
 function HelpDialog({ initialTab, iconType = 'help' }: HelpDialogProps) {
   const [activeTab, setActiveTab] = useState(initialTab);
-  const [noteName, setNoteName] = useState('Your Note Name');
+  const [noteName, setNoteName] = useState('Daily Notes');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [icon, setIcon] = useState(iconType);
 

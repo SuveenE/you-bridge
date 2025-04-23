@@ -30,7 +30,7 @@ function NoteEditor({
 
   // Get Apple Notes settings from localStorage
   const [settings, setSettings] = useState({
-    noteName: 'Your Note Name',
+    noteName: 'Daily Notes',
     todayOnly: true,
   });
 
