@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, DayPickerSingleProps } from 'react-day-picker';
 
 import { cn } from 'src/lib/utils';
 import { buttonVariants } from 'src/renderer/components/ui/button';
@@ -10,31 +10,70 @@ interface IconProps {
 }
 
 // Define icon components outside the Calendar component
-function IconLeft({ className }: IconProps): JSX.Element {
+function IconLeft({ className }: IconProps) {
   return <ChevronLeft className={cn('size-4', className)} />;
 }
 
-function IconRight({ className }: IconProps): JSX.Element {
+function IconRight({ className }: IconProps) {
   return <ChevronRight className={cn('size-4', className)} />;
 }
 
-interface CalendarProps extends React.ComponentProps<typeof DayPicker> {
-  className?: string;
-  classNames?: Record<string, string>;
-  showOutsideDays?: boolean;
-  mode?: string;
-}
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function Calendar({
   className = '',
   classNames = {},
   showOutsideDays = true,
   ...props
-}: CalendarProps): JSX.Element {
+}: CalendarProps) {
+  // Get today's date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Remove the disabled prop from props to avoid it being passed twice
+  const { disabled: originalDisabled, ...restProps } = props;
+
+  // Create a new disabled function that allows today to be clickable
+  const disabledWithTodayEnabled = React.useCallback(
+    (date: Date) => {
+      // Always allow today's date to be clickable
+      if (date.getTime() === today.getTime()) {
+        return false;
+      }
+
+      // If originalDisabled is a function, use it
+      if (typeof originalDisabled === 'function') {
+        return originalDisabled(date);
+      }
+
+      // If originalDisabled is an array of dates, check if the date is in the array
+      if (Array.isArray(originalDisabled)) {
+        return originalDisabled.some(
+          (disabledDate) => {
+            if (disabledDate instanceof Date) {
+              return disabledDate.getTime() === date.getTime();
+            }
+            return false;
+          }
+        );
+      }
+
+      // If originalDisabled is a boolean (true), disable the date
+      if (typeof originalDisabled === 'boolean') {
+        return originalDisabled;
+      }
+
+      // Default: don't disable
+      return false;
+    },
+    [originalDisabled, today]
+  );
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn('p-4', className)}
+      disabled={disabledWithTodayEnabled}
       classNames={{
         months: 'flex flex-col sm:flex-row gap-2',
         month: 'flex flex-col gap-4',
@@ -54,7 +93,7 @@ function Calendar({
         row: 'flex w-full mt-2',
         cell: cn(
           'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-range-end)]:rounded-r-md',
-          props.mode === 'range'
+          restProps.mode === 'range'
             ? '[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md'
             : '[&:has([aria-selected])]:rounded-md',
         ),
@@ -81,7 +120,7 @@ function Calendar({
         IconLeft,
         IconRight,
       }}
-      {...props}
+      {...restProps}
     />
   );
 }

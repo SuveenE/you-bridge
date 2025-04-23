@@ -18,14 +18,36 @@ import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
 import HelpDialog from './components/home/help-dialog';
 
+// Key for storing start date in localStorage
+const START_DATE_KEY = 'note_start_date';
+
 function Hello() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const navigate = useNavigate();
   const [noteDates, setNoteDates] = useState<Date[]>([]);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const [startDate, setStartDate] = useState<Date | null>(null);
 
   useEffect(() => {
+    // Load start date from localStorage
+    const savedStartDate = localStorage.getItem(START_DATE_KEY);
+    if (savedStartDate) {
+      try {
+        const parsedStartDate = new Date(savedStartDate);
+        setStartDate(parsedStartDate);
+      } catch (error) {
+        console.error('Error parsing start date:', error);
+        // If there's an error, set today as the start date
+        setStartDate(new Date());
+        localStorage.setItem(START_DATE_KEY, new Date().toISOString());
+      }
+    } else {
+      // If no start date is saved, set today as the start date
+      setStartDate(new Date());
+      localStorage.setItem(START_DATE_KEY, new Date().toISOString());
+    }
+
     // Load notes from localStorage
     const savedNotes = localStorage.getItem('notes');
     if (savedNotes) {
@@ -76,30 +98,45 @@ function Hello() {
     };
   }, [navigate]);
 
-  const handleDateSelect = (value: Date | undefined) => {
-    setDate(value);
-    if (value) {
-      const formattedDate = format(value, 'yyyy-MM-dd');
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
       navigate(`/notes?date=${formattedDate}`);
     }
   };
 
-  // Calculate past dates without notes for red highlighting
-  const pastDatesWithoutNotes = Array.from(
-    { length: today.getDate() - 1 },
-    (_, i) => {
-      const currentDate = new Date(today);
-      currentDate.setDate(i + 1);
-      currentDate.setHours(0, 0, 0, 0);
+  // Calculate dates without notes for red highlighting (only after start date)
+  const datesWithoutNotes = startDate
+    ? Array.from(
+        { length: Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1 },
+        (_, i) => {
+          const currentDate = new Date(startDate);
+          currentDate.setDate(startDate.getDate() + i);
+          currentDate.setHours(0, 0, 0, 0);
 
-      // Check if this date has a note
-      const hasNote = noteDates.some(
-        (noteDate) => noteDate.getTime() === currentDate.getTime(),
-      );
+          // Skip today and future dates
+          if (currentDate.getTime() >= today.getTime()) {
+            return null;
+          }
 
-      return hasNote ? null : currentDate;
-    },
-  ).filter(Boolean) as Date[];
+          // Check if this date has a note
+          const hasNote = noteDates.some(
+            (noteDate) => noteDate.getTime() === currentDate.getTime(),
+          );
+
+          return hasNote ? null : currentDate;
+        },
+      ).filter(Boolean) as Date[]
+    : [];
+
+  // Create a separate array with just the dates that have notes
+  const actualNoteDates = noteDates.filter(noteDate => {
+    // Make sure we're only showing notes for dates on or after the start date
+    // and for dates not in the future
+    if (!startDate) return false;
+    return noteDate >= startDate && noteDate < today;
+  });
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
@@ -147,19 +184,25 @@ function Hello() {
       </div>
 
       <Calendar
-        date={date}
+        mode="single"
+        selected={date}
         onSelect={handleDateSelect}
         className="rounded-2xl border border-gray-200"
         modifiers={{
-          hasNote: noteDates,
+          hasNote: actualNoteDates,
           today: [today],
-          pastWithoutNote: pastDatesWithoutNotes,
+          withoutNote: datesWithoutNotes,
         }}
         modifiersStyles={{
           hasNote: { backgroundColor: '#86efac' }, // Brighter green for days with notes
           today: { backgroundColor: '#fde68a' }, // Brighter yellow for today
-          pastWithoutNote: { backgroundColor: '#fca5a5' }, // Brighter red for past days without notes
+          withoutNote: { backgroundColor: '#fca5a5' }, // Brighter red for days without notes
         }}
+        disabled={(dateToCheck) => {
+          if (!startDate) return false;
+          return dateToCheck < startDate;
+        }}
+        fromDate={startDate || undefined}
       />
       <div className="text-sm text-gray-500 my-8">
         <span>
