@@ -44,6 +44,38 @@ function Hello() {
     }
   }, []);
 
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if cmd (Meta) key is pressed
+      if (e.metaKey) {
+        switch (e.key) {
+          case 'i':
+            e.preventDefault();
+            navigate('/notes');
+            break;
+          case 'l':
+            e.preventDefault();
+            navigate('/reads');
+            break;
+          case 'k':
+            e.preventDefault();
+            navigate('/watchlist');
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup event listener
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [navigate]);
+
   const handleDateSelect = (value: Date | undefined) => {
     setDate(value);
     if (value) {
@@ -86,28 +118,36 @@ function Hello() {
           to="/notes"
           className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          <FileText size={16} />
+          <FileText size={16} strokeWidth={2.5} />
           <span>Notes</span>
+          <span className="ml-1 text-xs bg-amber-200 px-1.5 py-0.5 rounded-md">
+            ⌘ I
+          </span>
         </Link>
         <Link
           to="/reads"
           className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          <BookOpen size={16} />
-          <span>Reading List</span>
+          <BookOpen size={16} strokeWidth={2.5} />
+          <span>Reads</span>
+          <span className="ml-1 text-xs bg-amber-200 px-1.5 py-0.5 rounded-md">
+            ⌘ L
+          </span>
         </Link>
         <Link
           to="/watchlist"
           className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          <Film size={16} />
+          <Film size={16} strokeWidth={2.5} />
           <span>Watch List</span>
+          <span className="ml-1 text-xs bg-amber-200 px-1.5 py-0.5 rounded-md">
+            ⌘ K
+          </span>
         </Link>
       </div>
 
       <Calendar
-        mode="single"
-        selected={date}
+        date={date}
         onSelect={handleDateSelect}
         className="rounded-2xl border border-gray-200"
         modifiers={{
