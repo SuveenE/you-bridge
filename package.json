@@ -1,5 +1,5 @@
 {
-  "name": "NoteStack",
+  "name": "notestack",
   "description": "By Suveen.",
   "license": "MIT",
   "author": {
@@ -166,7 +166,7 @@
   },
   "build": {
     "productName": "NoteStack",
-    "appId": "notestack.suveen",
+    "appId": "com.suveenellawela.notestack",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -176,12 +176,16 @@
     ],
     "icon": "assets/icon.png",
     "mac": {
-      "sign": ".erb/scripts/notarize.js",
-      "notarize": false,
-      "target": [
-        "zip",
-        "dmg"
-      ],
+      "notarize": {
+        "teamId": "Z98F8W9LD3"
+      },
+      "target": {
+        "target": "default",
+        "arch": [
+          "arm64",
+          "x64"
+        ]
+      },
       "type": "distribution",
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
