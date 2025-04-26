@@ -18,9 +18,48 @@ import setupAppleNotesHandlers from './appleNotes';
 
 class AppUpdater {
   constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
+    // Disable automatic downloading of updates
+    autoUpdater.autoDownload = false;
+    // Enable automatic installation of updates on the next computer restart
+    autoUpdater.autoInstallOnAppQuit = true;
+
+    try {
+      // Start listening for update events
+      this.listenEvents();
+      // Check for available updates
+      autoUpdater.checkForUpdates();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async listenEvents() {
+    // Event listener for when the app is checking for updates
+    autoUpdater.on('checking-for-update', () => {
+      console.log('Checking for updates...');
+    });
+
+    // Event listener for when an update is available
+    autoUpdater.on('update-available', (info) => {
+      console.log('Update available:', info);
+      // Download the latest version of the update
+      autoUpdater.downloadUpdate();
+    });
+
+    // Event listener for when no update is available
+    autoUpdater.on('update-not-available', (info) => {
+      console.log('Update not available:', info);
+    });
+
+    // Event listener for when an error occurs during the update process
+    autoUpdater.on('error', (err) => {
+      console.log('Error in auto-updater:', err);
+    });
+
+    // Event listener for when an update has been downloaded
+    autoUpdater.on('update-downloaded', (info) => {
+      console.log('Update downloaded:', info);
+    });
   }
 }
 
