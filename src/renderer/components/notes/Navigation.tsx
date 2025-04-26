@@ -23,7 +23,7 @@ function Navigation({
             className="p-1.5 rounded-md flex items-center justify-center text-gray-800 hover:text-amber-600 m-[10px] bg-transparent shadow-none"
             aria-label="Toggle Sidebar"
           >
-            <History size={18} strokeWidth={2.5} />
+            <History size={18} strokeWidth={2} />
           </button>
         </div>
       )}
@@ -34,7 +34,7 @@ function Navigation({
           to="/"
           className="p-1.5 rounded-md flex items-center justify-center text-gray-800 hover:text-amber-600"
         >
-          <Home size={18} strokeWidth={2.5} />
+          <Home size={18} strokeWidth={2} />
         </Link>
         <HelpDialog initialTab="settings" iconType="settings" />
       </div>

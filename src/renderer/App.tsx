@@ -148,7 +148,7 @@ function Hello() {
 
       <p className="text-lg font-bold my-2">NoteStack</p>
 
-      <img width="100" alt="icon" className="rounded-full mb-6" src={icon} />
+      <img width="100" alt="icon" className="mb-6" src={icon} />
       <p className="text-sm text-gray-500 mb-4">
         A simple way to track your notes, todos, and reminders.
       </p>
@@ -157,7 +157,7 @@ function Hello() {
           to="/notes"
           className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          <FileText size={16} strokeWidth={2.5} />
+          <FileText size={16} strokeWidth={2} />
           <span>Notes</span>
           <span className="ml-1 text-xs bg-amber-200 px-1.5 py-0.5 rounded-md">
             ⌘ I
@@ -167,7 +167,7 @@ function Hello() {
           to="/reads"
           className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          <BookOpen size={16} strokeWidth={2.5} />
+          <BookOpen size={16} strokeWidth={2} />
           <span>Reads</span>
           <span className="ml-1 text-xs bg-amber-200 px-1.5 py-0.5 rounded-md">
             ⌘ L
@@ -177,7 +177,7 @@ function Hello() {
           to="/watchlist"
           className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
         >
-          <Film size={16} strokeWidth={2.5} />
+          <Film size={16} strokeWidth={2} />
           <span>Watch List</span>
           <span className="ml-1 text-xs bg-amber-200 px-1.5 py-0.5 rounded-md">
             ⌘ K

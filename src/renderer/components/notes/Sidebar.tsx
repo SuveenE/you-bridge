@@ -31,7 +31,7 @@ function Sidebar({
             className="p-1 rounded flex items-center justify-center text-gray-800 hover:text-amber-600"
             aria-label="Close Sidebar"
           >
-            <SquareChevronLeft size={18} strokeWidth={2.5} />
+            <SquareChevronLeft size={18} strokeWidth={2} />
           </button>
         </div>
         <div className="space-y-1">

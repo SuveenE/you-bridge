@@ -193,7 +193,7 @@ function NoteEditor({
           <p className="font-bold text-gray-800">{formattedDate}</p>
           {readOnly && (
             <span className="ml-2 text-gray-600">
-              <Lock size={18} strokeWidth={2.5} />
+              <Lock size={18} strokeWidth={2} />
             </span>
           )}
         </div>
@@ -209,7 +209,7 @@ function NoteEditor({
               <RefreshCw
                 className={`${isLoading ? 'animate-spin' : ''}`}
                 size={18}
-                strokeWidth={2.5}
+                strokeWidth={2}
               />
             </button>
           )}

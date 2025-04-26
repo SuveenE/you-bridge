@@ -145,9 +145,9 @@ function HelpDialog({ initialTab, iconType = 'help' }: HelpDialogProps) {
       <DialogTrigger asChild>
         <div className="p-1 rounded-md flex items-center justify-center text-gray-800 hover:text-amber-600 bg-transparent shadow-none cursor-pointer">
           {icon === 'help' ? (
-            <HelpCircle size={18} strokeWidth={2.5} />
+            <HelpCircle size={18} strokeWidth={2} />
           ) : (
-            <Settings size={18} strokeWidth={2.5} />
+            <Settings size={18} strokeWidth={2} />
           )}
         </div>
       </DialogTrigger>
