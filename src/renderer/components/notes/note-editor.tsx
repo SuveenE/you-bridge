@@ -1,5 +1,5 @@
 import React, { JSX, useEffect, useRef, useState, useCallback } from 'react';
-import { Lock, RefreshCw } from 'lucide-react';
+import { Lock, RefreshCw, Trash2 } from 'lucide-react';
 import {
   format,
   parseISO,
@@ -8,12 +8,20 @@ import {
   differenceInMilliseconds,
 } from 'date-fns';
 import { useAppleNotes } from '../../../hooks/useAppleNotes';
+import DeleteNoteDialog from './delete-note-dialog';
+
+// Helper function to get today's date in DD/MM format
+const getTodayFormatted = () => {
+  const today = new Date();
+  return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}`;
+};
 
 interface NoteEditorProps {
   date: string;
   content: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   readOnly: boolean;
+  onDelete: () => void;
 }
 
 function NoteEditor({
@@ -21,9 +29,11 @@ function NoteEditor({
   content,
   onChange,
   readOnly = false,
+  onDelete,
 }: NoteEditorProps): JSX.Element {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [autoSyncScheduled, setAutoSyncScheduled] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Check if the currently viewed note is from today
   const isTodayNote = date ? isToday(parseISO(date)) : false;
@@ -55,8 +65,6 @@ function NoteEditor({
     todayOnly: false, // Always fetch entire note regardless of setting
   });
 
-  console.log('appleNoteContent', appleNoteContent);
-
   const adjustHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = '0px';
@@ -71,33 +79,26 @@ function NoteEditor({
   // Helper function to parse the Apple Notes content to extract only today's content
   const parseNoteContent = (noteText: string) => {
     // Get today's date in the format used in notes (DD/MM)
-    const today = new Date();
-    const todayFormatted = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}`;
+    const todayFormatted = getTodayFormatted();
 
-    // Split the content by lines
-    const lines = noteText.split('\n');
-    let currentDate = '';
-    const todaysContentLines: string[] = [];
-    let captureContent = false;
+    // Split the content by sections based on dates
+    const sections = noteText.split(/(?=^\d{2}\/\d{2}$)/m);
 
-    lines.forEach((line) => {
-      // Check if the line is a date marker (like "20/04")
-      const dateMatch = line.match(/^\d{2}\/\d{2}$/);
+    // Find today's section
+    const todaySection = sections.find((section) =>
+      section.trim().startsWith(todayFormatted),
+    );
 
-      if (dateMatch) {
-        currentDate = line;
-        // Start capturing content if this is today's date
-        captureContent = currentDate === todayFormatted;
-        return;
-      }
+    if (!todaySection) {
+      return '';
+    }
 
-      // If we're in the section for today's date, capture the content
-      if (captureContent && line.trim() !== '') {
-        todaysContentLines.push(line);
-      }
-    });
-
-    return todaysContentLines.join('\n');
+    // Remove the date line and return the content
+    return todaySection
+      .split('\n')
+      .slice(1) // Skip the date line
+      .filter((line) => line.trim() !== '')
+      .join('\n');
   };
 
   // Function to combine Apple Notes content with textarea content
@@ -167,12 +168,22 @@ function NoteEditor({
       );
     }
 
+    const todayFormatted = getTodayFormatted();
+
     // Get today's content for the preview
     const todayContentPreview = appleNoteContent
       ? parseNoteContent(appleNoteContent)
       : '';
-    const previewContent = todayContentPreview || appleNoteContent;
+    const previewContent = todayContentPreview;
 
+    if (previewContent === '') {
+      return (
+        <p className="text-gray-700 text-xs">
+          No content from Apple Notes today. Please add notes with today&apos;s
+          date formatted as {todayFormatted}.
+        </p>
+      );
+    }
     // Display the Apple Note content with proper whitespace handling
     return (
       <div>
@@ -188,13 +199,32 @@ function NoteEditor({
 
   return (
     <div className="flex flex-col items-center h-screen p-6 text-gray-800 flex-1 bg-white pt-16">
+      <DeleteNoteDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={() => {
+          onDelete();
+          setIsDeleteDialogOpen(false);
+        }}
+        date={formattedDate}
+      />
       <div className="flex flex-row justify-between text-sm w-3/5 mb-4">
         <div className="flex items-center">
           <p className="font-bold text-gray-800">{formattedDate}</p>
           {readOnly && (
-            <span className="ml-2 text-gray-600">
-              <Lock size={18} strokeWidth={2} />
-            </span>
+            <>
+              <span className="ml-2 text-gray-600">
+                <Lock size={18} strokeWidth={2} />
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className="ml-2 text-gray-600 hover:text-red-600 transition-colors"
+                title="Delete note"
+              >
+                <Trash2 size={18} strokeWidth={2} />
+              </button>
+            </>
           )}
         </div>
 
