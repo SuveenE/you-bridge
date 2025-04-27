@@ -16,64 +16,89 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
+  private updateAvailable: boolean = false;
+
+  private menu: Menu | null = null;
+
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
+    this.setupUpdateEvents();
+  }
+
+  private setupUpdateEvents(): void {
+    autoUpdater.on('update-downloaded', () => {
+      this.updateAvailable = true;
+      this.updateMenu();
+    });
+
+    autoUpdater.on('update-not-available', () => {
+      this.updateAvailable = false;
+      this.updateMenu();
+    });
+  }
+
+  private updateMenu(): void {
+    if (this.menu) {
+      const template = process.platform === 'darwin'
+          ? this.buildDarwinTemplate()
+          : this.buildDefaultTemplate();
+      const newMenu = Menu.buildFromTemplate(template);
+      Menu.setApplicationMenu(newMenu);
+      this.menu = newMenu;
+    }
   }
 
   async checkForUpdates() {
     try {
-      log.info('Checking for updates from menu...');
+      log.info('Checking for updates...');
       const result = await autoUpdater.checkForUpdates();
-      if (result?.updateInfo) {
-        const { version } = result.updateInfo;
-        const response = await dialog.showMessageBox(this.mainWindow, {
-          type: 'info',
-          title: 'Software Update',
-          message: `A new version (${version}) is available.`,
-          detail: 'Would you like to download and install the update now?',
-          buttons: ['Download and Install', 'Later'],
-          defaultId: 0,
-        });
 
-        if (response.response === 0) {
-          log.info('User chose to download and install update');
-          try {
-            await autoUpdater.downloadUpdate();
-            await dialog.showMessageBox(this.mainWindow, {
-              type: 'info',
-              title: 'Update Ready',
-              message: 'Update downloaded',
-              detail: 'The update will be installed when you restart the application.',
-              buttons: ['Restart Now', 'Later'],
-              defaultId: 0,
-            }).then((dialogResponse) => {
-              if (dialogResponse.response === 0) {
-                log.info('User chose to restart now');
-                autoUpdater.quitAndInstall(true, true);
-              }
-              return null;
-            });
-          } catch (err) {
-            log.error('Failed to download update:', err);
-            dialog.showErrorBox(
-              'Update Error',
-              'Failed to download the update. Please try again later.',
-            );
-          }
-        }
-      } else {
+      if (!result?.updateInfo) {
         dialog.showMessageBox(this.mainWindow, {
           type: 'info',
-          title: 'Software Update',
-          message: "You're up to date!",
-          detail: `NoteStack ${app.getVersion()} is currently the newest version available.`,
+          title: 'No Updates',
+          message: 'You are up to date!',
+          detail: 'No new versions are available.',
+          buttons: ['OK'],
         });
+        return;
+      }
+
+      const { version: latestVersion } = result.updateInfo;
+      const currentVersion = app.getVersion();
+
+      if (latestVersion === currentVersion) {
+        dialog.showMessageBox(this.mainWindow, {
+          type: 'info',
+          title: 'No Updates',
+          message: 'You are up to date!',
+          detail: `Current version: ${currentVersion}`,
+          buttons: ['OK'],
+        });
+        return;
+      }
+
+      log.info('New version found, downloading update...');
+      await autoUpdater.downloadUpdate();
+
+      const response = await dialog.showMessageBox(this.mainWindow, {
+        type: 'info',
+        title: 'Update Ready',
+        message: 'A new version has been downloaded',
+        detail: 'The update will be installed when you restart the application.',
+        buttons: ['Restart Now', 'Later'],
+        defaultId: 0,
+      });
+
+      if (response.response === 0) {
+        log.info('User chose to restart now');
+        autoUpdater.quitAndInstall(true, true);
       }
     } catch (error) {
-      log.error('Error checking for updates:', error);
+      log.error('Error during update process:', error);
       dialog.showErrorBox(
         'Update Error',
-        'Failed to check for updates. Please try again later.',
+        'Failed to check or download updates. Please try again later.',
       );
     }
   }
@@ -93,6 +118,7 @@ export default class MenuBuilder {
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
+    this.menu = menu;
 
     return menu;
   }
@@ -121,35 +147,15 @@ export default class MenuBuilder {
           selector: 'orderFrontStandardAboutPanel:',
         },
         {
-          label: 'Check for Updates...',
-          click: () => {
-            this.checkForUpdates();
-          },
-        },
-        {
-          label: 'Restart to Install Update',
+          label: this.updateAvailable
+            ? 'Restart to Install Update'
+            : 'Check for Updates...',
           click: async () => {
-            log.info('Checking update status before restart...');
-            try {
-              const result = await autoUpdater.checkForUpdates();
-              if (result?.updateInfo) {
-                await autoUpdater.downloadUpdate();
-                log.info('Update downloaded, restarting...');
-                autoUpdater.quitAndInstall(true, true);
-              } else {
-                dialog.showMessageBox(this.mainWindow, {
-                  type: 'info',
-                  title: 'No Updates',
-                  message: 'No updates available to install.',
-                  detail: 'Your application is already up to date.',
-                });
-              }
-            } catch (err) {
-              log.error('Error during restart process:', err);
-              dialog.showErrorBox(
-                'Update Error',
-                'Failed to install update. Please try again later.',
-              );
+            if (this.updateAvailable) {
+              log.info('Installing update...');
+              autoUpdater.quitAndInstall(true, true);
+            } else {
+              await this.checkForUpdates();
             }
           },
         },
@@ -312,35 +318,15 @@ export default class MenuBuilder {
             },
           },
           {
-            label: 'Check for Updates...',
-            click: () => {
-              this.checkForUpdates();
-            },
-          },
-          {
-            label: 'Restart to Install Update',
+            label: this.updateAvailable
+              ? 'Restart to Install Update'
+              : 'Check for Updates...',
             click: async () => {
-              log.info('Checking update status before restart...');
-              try {
-                const result = await autoUpdater.checkForUpdates();
-                if (result?.updateInfo) {
-                  await autoUpdater.downloadUpdate();
-                  log.info('Update downloaded, restarting...');
-                  autoUpdater.quitAndInstall(true, true);
-                } else {
-                  dialog.showMessageBox(this.mainWindow, {
-                    type: 'info',
-                    title: 'No Updates',
-                    message: 'No updates available to install.',
-                    detail: 'Your application is already up to date.',
-                  });
-                }
-              } catch (err) {
-                log.error('Error during restart process:', err);
-                dialog.showErrorBox(
-                  'Update Error',
-                  'Failed to install update. Please try again later.',
-                );
+              if (this.updateAvailable) {
+                log.info('Installing update...');
+                autoUpdater.quitAndInstall(true, true);
+              } else {
+                await this.checkForUpdates();
               }
             },
           },
@@ -349,3 +335,5 @@ export default class MenuBuilder {
     ];
   }
 }
+
+
