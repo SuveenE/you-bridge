@@ -1,7 +1,6 @@
 import {
   app,
   Menu,
-  shell,
   BrowserWindow,
   MenuItemConstructorOptions,
   dialog,
@@ -27,13 +26,41 @@ export default class MenuBuilder {
       const result = await autoUpdater.checkForUpdates();
       if (result?.updateInfo) {
         const { version } = result.updateInfo;
-        dialog.showMessageBox(this.mainWindow, {
+        const response = await dialog.showMessageBox(this.mainWindow, {
           type: 'info',
           title: 'Software Update',
           message: `A new version (${version}) is available.`,
-          detail: 'The update will be downloaded and installed automatically.',
-          buttons: ['OK'],
+          detail: 'Would you like to download and install the update now?',
+          buttons: ['Download and Install', 'Later'],
+          defaultId: 0,
         });
+
+        if (response.response === 0) {
+          log.info('User chose to download and install update');
+          try {
+            await autoUpdater.downloadUpdate();
+            await dialog.showMessageBox(this.mainWindow, {
+              type: 'info',
+              title: 'Update Ready',
+              message: 'Update downloaded',
+              detail: 'The update will be installed when you restart the application.',
+              buttons: ['Restart Now', 'Later'],
+              defaultId: 0,
+            }).then((dialogResponse) => {
+              if (dialogResponse.response === 0) {
+                log.info('User chose to restart now');
+                autoUpdater.quitAndInstall(true, true);
+              }
+              return null;
+            });
+          } catch (err) {
+            log.error('Failed to download update:', err);
+            dialog.showErrorBox(
+              'Update Error',
+              'Failed to download the update. Please try again later.',
+            );
+          }
+        }
       } else {
         dialog.showMessageBox(this.mainWindow, {
           type: 'info',
@@ -46,7 +73,7 @@ export default class MenuBuilder {
       log.error('Error checking for updates:', error);
       dialog.showErrorBox(
         'Update Error',
-        'Failed to check for updates. Please try again later.'
+        'Failed to check for updates. Please try again later.',
       );
     }
   }
@@ -100,9 +127,30 @@ export default class MenuBuilder {
           },
         },
         {
-          label: 'Restart to Update',
-          click: () => {
-            autoUpdater.quitAndInstall();
+          label: 'Restart to Install Update',
+          click: async () => {
+            log.info('Checking update status before restart...');
+            try {
+              const result = await autoUpdater.checkForUpdates();
+              if (result?.updateInfo) {
+                await autoUpdater.downloadUpdate();
+                log.info('Update downloaded, restarting...');
+                autoUpdater.quitAndInstall(true, true);
+              } else {
+                dialog.showMessageBox(this.mainWindow, {
+                  type: 'info',
+                  title: 'No Updates',
+                  message: 'No updates available to install.',
+                  detail: 'Your application is already up to date.',
+                });
+              }
+            } catch (err) {
+              log.error('Error during restart process:', err);
+              dialog.showErrorBox(
+                'Update Error',
+                'Failed to install update. Please try again later.',
+              );
+            }
           },
         },
         { type: 'separator' },
@@ -270,9 +318,30 @@ export default class MenuBuilder {
             },
           },
           {
-            label: 'Restart to Update',
-            click: () => {
-              autoUpdater.quitAndInstall();
+            label: 'Restart to Install Update',
+            click: async () => {
+              log.info('Checking update status before restart...');
+              try {
+                const result = await autoUpdater.checkForUpdates();
+                if (result?.updateInfo) {
+                  await autoUpdater.downloadUpdate();
+                  log.info('Update downloaded, restarting...');
+                  autoUpdater.quitAndInstall(true, true);
+                } else {
+                  dialog.showMessageBox(this.mainWindow, {
+                    type: 'info',
+                    title: 'No Updates',
+                    message: 'No updates available to install.',
+                    detail: 'Your application is already up to date.',
+                  });
+                }
+              } catch (err) {
+                log.error('Error during restart process:', err);
+                dialog.showErrorBox(
+                  'Update Error',
+                  'Failed to install update. Please try again later.',
+                );
+              }
             },
           },
         ],

@@ -120,6 +120,12 @@ ipcMain.on('ipc-example', async (event, arg) => {
   event.sender.send('ipc-example', msgTemplate('pong'));
 });
 
+// Add handler for app restart
+ipcMain.on('restart_app', () => {
+  log.info('Restarting app for update installation...');
+  autoUpdater.quitAndInstall();
+});
+
 // Setup Apple Notes integration
 setupAppleNotesHandlers();
 

@@ -146,7 +146,7 @@ function Hello() {
         <HelpDialog initialTab="howto" iconType="help" />
       </div>
 
-      <p className="text-lg font-bold my-2">NoteStack 0.7</p>
+      <p className="text-lg font-bold my-2">NoteStack</p>
 
       <img width="100" alt="icon" className="mb-6" src={icon} />
       <p className="text-sm text-gray-500 mb-4">
