@@ -1,5 +1,4 @@
 import { format } from 'date-fns';
-import { DailyNotes } from '../../lib/types';
 
 const NOTES_STORAGE_KEY = 'daily_notes';
 
@@ -9,6 +8,13 @@ export interface ReadItem {
   done: boolean;
   dateAdded: string;
 }
+
+type NotesMap = {
+  [date: string]: {
+    apple_notes?: string;
+    desktop_app?: string;
+  };
+};
 
 // Extract reading items from note content
 export function extractReadItems(content: string): ReadItem[] {
@@ -89,25 +95,25 @@ export function extractReadsFromAllNotes(): ReadItem[] {
     const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
     if (!savedNotes) return [];
 
-    const allNotes: DailyNotes = JSON.parse(savedNotes);
+    const allNotes: NotesMap = JSON.parse(savedNotes);
     const allReadItems: ReadItem[] = [];
 
     // Extract read items from each note
     Object.entries(allNotes).forEach(([date, dateNotes]) => {
-      // Combine all notes for this date
-      const combinedContent = Object.values(dateNotes)
-        .map((note) => note.note)
-        .join('\n');
+      // Process each note type
+      Object.entries(dateNotes).forEach(([_, content]) => {
+        if (content) {
+          const readItemsFromNote = extractReadItems(content);
 
-      const readItemsFromNote = extractReadItems(combinedContent);
+          // Use the note's date as the dateAdded for these items
+          const updatedItems = readItemsFromNote.map((item) => ({
+            ...item,
+            dateAdded: date,
+          }));
 
-      // Use the note's date as the dateAdded for these items
-      const updatedItems = readItemsFromNote.map((item) => ({
-        ...item,
-        dateAdded: date,
-      }));
-
-      allReadItems.push(...updatedItems);
+          allReadItems.push(...updatedItems);
+        }
+      });
     });
 
     // Add all found items

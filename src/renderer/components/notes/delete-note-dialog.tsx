@@ -23,7 +23,7 @@ function DeleteNoteDialog({
 }: DeleteNoteDialogProps): JSX.Element {
   return (
     <Dialog open={isOpen}>
-      <DialogContent>
+      <DialogContent className="bg-amber-50 text-gray-900">
         <DialogHeader>
           <DialogTitle>Delete Note</DialogTitle>
           <DialogDescription>
@@ -35,7 +35,7 @@ function DeleteNoteDialog({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-amber-300 rounded-md hover:bg-amber-500"
           >
             Cancel
           </button>

@@ -4,12 +4,14 @@ import { useLocation } from 'react-router-dom';
 import Navigation from '../components/notes/navigation';
 import Sidebar from '../components/notes/sidebar';
 import NoteEditor from '../components/notes/note-editor';
-import { NoteItem } from '../../lib/types';
 
 const NOTES_STORAGE_KEY = 'daily_notes';
 
 type NotesMap = {
-  [date: string]: NoteItem[];
+  [date: string]: {
+    apple_notes?: string;
+    desktop_app?: string;
+  };
 };
 
 export default function Notes() {
@@ -37,16 +39,14 @@ export default function Notes() {
         const targetDate = dateParam || todayString;
         setSelectedDate(targetDate);
 
-        // Load the target date's note if it exists
-        if (allNotes[targetDate]?.length > 0) {
-          setContent(
-            allNotes[targetDate][allNotes[targetDate].length - 1].note,
-          );
+        // Load the target date's desktop note if it exists
+        if (allNotes[targetDate]?.desktop_app) {
+          setContent(allNotes[targetDate].desktop_app || '');
         } else {
           setContent('');
         }
       } else {
-        // If no notes exist at all, initialize with an empty object
+        // If no notes exist at all, initialize with empty object
         setNotes({});
         localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify({}));
         setSelectedDate(dateParam || todayString);
@@ -66,27 +66,10 @@ export default function Notes() {
     // Only update notes if editing today's note
     if (selectedDate === todayString) {
       const updatedNotes = { ...notes };
-      const noteItem: NoteItem = {
-        note: newContent,
-        time: new Date().toISOString(),
-        type: 'desktop_app',
-      };
-
       if (!updatedNotes[selectedDate]) {
-        updatedNotes[selectedDate] = [];
+        updatedNotes[selectedDate] = {};
       }
-
-      if (
-        updatedNotes[selectedDate].length > 0 &&
-        updatedNotes[selectedDate][updatedNotes[selectedDate].length - 1]
-          .type === 'desktop_app'
-      ) {
-        // Update the last note if it's from desktop_app
-        updatedNotes[selectedDate][updatedNotes[selectedDate].length - 1] = noteItem;
-      } else {
-        // Add a new note
-        updatedNotes[selectedDate].push(noteItem);
-      }
+      updatedNotes[selectedDate].desktop_app = newContent;
 
       setNotes(updatedNotes);
       localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(updatedNotes));
@@ -97,10 +80,8 @@ export default function Notes() {
     if (selectedDate === todayString) {
       const updatedNotes = { ...notes };
       if (updatedNotes[selectedDate]) {
-        updatedNotes[selectedDate] = updatedNotes[selectedDate].filter(
-          (note) => note.type !== 'desktop_app',
-        );
-        if (updatedNotes[selectedDate].length === 0) {
+        delete updatedNotes[selectedDate].desktop_app;
+        if (!updatedNotes[selectedDate].apple_notes) {
           delete updatedNotes[selectedDate];
         }
         setNotes(updatedNotes);
@@ -112,8 +93,8 @@ export default function Notes() {
 
   const selectNote = (date: string) => {
     setSelectedDate(date);
-    if (notes[date]?.length > 0) {
-      setContent(notes[date][notes[date].length - 1].note);
+    if (notes[date]?.desktop_app) {
+      setContent(notes[date].desktop_app || '');
     } else {
       setContent('');
     }

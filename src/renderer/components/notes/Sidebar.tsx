@@ -1,10 +1,12 @@
 import { JSX } from 'react';
 import { format, parseISO, isToday } from 'date-fns';
 import { SquareChevronLeft } from 'lucide-react';
-import { NoteItem } from '../../../lib/types';
 
 type NotesMap = {
-  [date: string]: NoteItem[];
+  [date: string]: {
+    apple_notes?: string;
+    desktop_app?: string;
+  };
 };
 
 interface SidebarProps {
@@ -41,7 +43,7 @@ function Sidebar({
                 new Date(dateB).getTime() - new Date(dateA).getTime(),
             )
             .map(([date, dateNotes]) => {
-              const latestNote = dateNotes[dateNotes.length - 1];
+              const noteContent = dateNotes.desktop_app || dateNotes.apple_notes || '';
               return (
                 <div
                   key={date}
@@ -68,8 +70,8 @@ function Sidebar({
                     )}
                   </div>
                   <div className="text-xs opacity-50 truncate mt-1">
-                    {latestNote.note.substring(0, 40)}
-                    {latestNote.note.length > 40 && '...'}
+                    {noteContent.substring(0, 40)}
+                    {noteContent.length > 40 && '...'}
                   </div>
                 </div>
               );

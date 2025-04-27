@@ -1,12 +1,6 @@
-import React, { JSX, useEffect, useRef, useState, useCallback } from 'react';
+import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Lock, RefreshCw, Trash2 } from 'lucide-react';
-import {
-  format,
-  parseISO,
-  isToday,
-  endOfDay,
-  differenceInMilliseconds,
-} from 'date-fns';
+import { format, parseISO, isToday } from 'date-fns';
 import { useAppleNotes } from '../../../hooks/useAppleNotes';
 import useNotes from '../../../hooks/useNotes';
 import DeleteNoteDialog from './delete-note-dialog';
@@ -34,9 +28,8 @@ function NoteEditor({
   onDelete,
 }: NoteEditorProps): JSX.Element {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [autoSyncScheduled, setAutoSyncScheduled] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { notes, saveNote } = useNotes(date);
+  const { saveNote } = useNotes(date);
 
   // Check if the currently viewed note is from today
   const isTodayNote = date ? isToday(parseISO(date)) : false;
@@ -79,30 +72,6 @@ function NoteEditor({
     adjustHeight();
   }, [content]);
 
-  // Display notes from the current date
-  useEffect(() => {
-    if (notes.length > 0) {
-      // Combine notes by type, maintaining order but updating content
-      const combinedContent = notes
-        .map((note) => {
-          if (note.type === 'desktop_app') {
-            return note.note;
-          }
-          if (note.type === 'apple_notes') {
-            return `\n\n--- Apple Notes Content ---\n${note.note}`;
-          }
-          return '';
-        })
-        .filter(Boolean)
-        .join('\n\n');
-
-      const event = {
-        target: { value: combinedContent },
-      } as React.ChangeEvent<HTMLTextAreaElement>;
-      onChange(event);
-    }
-  }, [notes, onChange]);
-
   // Helper function to parse the Apple Notes content to extract only today's content
   const parseNoteContent = (noteText: string) => {
     // Get today's date in the format used in notes (DD/MM)
@@ -128,57 +97,10 @@ function NoteEditor({
       .join('\n');
   };
 
-  // Function to combine Apple Notes content with textarea content
-  const combineNotesContent = useCallback(() => {
-    if (appleNoteContent && !readOnly && isTodayNote) {
-      const todayContent = parseNoteContent(appleNoteContent);
-
-      if (!todayContent) {
-        return;
-      }
-
-      // Add Apple Notes content as a block at the bottom
-      const updatedContent = content
-        ? `${content}\n\n--- Apple Notes Content ---\n${todayContent}`
-        : todayContent;
-
-      // Save the combined content
-      saveNote(updatedContent, 'apple_notes' as NoteType);
-
-      const event = {
-        target: { value: updatedContent },
-      } as React.ChangeEvent<HTMLTextAreaElement>;
-      onChange(event);
-    }
-  }, [appleNoteContent, readOnly, isTodayNote, content, onChange, saveNote]);
-
   // Handle manual refresh when refresh icon is clicked
   const handleManualRefresh = async () => {
     await refetch();
   };
-
-  // Schedule end-of-day combination of Apple Notes with textarea content
-  useEffect(() => {
-    if (isTodayNote && !readOnly && !autoSyncScheduled) {
-      const today = new Date();
-      const endDay = endOfDay(today);
-      const timeUntilEndOfDay = differenceInMilliseconds(endDay, today);
-
-      // Set a timeout to combine notes at the end of the day
-      const timer = setTimeout(() => {
-        combineNotesContent();
-      }, timeUntilEndOfDay);
-
-      setAutoSyncScheduled(true);
-
-      // Clean up the timer when component unmounts
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-    // Return a no-op cleanup function when the condition isn't met
-    return () => {};
-  }, [isTodayNote, readOnly, autoSyncScheduled, combineNotesContent]);
 
   // Format the date to include day of week
   const formattedDate = date ? format(parseISO(date), 'EEEE, MMM d, yyyy') : '';
@@ -225,6 +147,14 @@ function NoteEditor({
     );
   };
 
+  // Effect to handle saving Apple Notes content
+  useEffect(() => {
+    if (appleNoteContent) {
+      const todayContentPreview = parseNoteContent(appleNoteContent);
+      saveNote(todayContentPreview, 'apple_notes' as NoteType);
+    }
+  }, [appleNoteContent]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="flex flex-col items-center h-screen p-6 text-gray-800 flex-1 bg-white pt-16">
       <DeleteNoteDialog
@@ -237,22 +167,24 @@ function NoteEditor({
         date={formattedDate}
       />
       <div className="flex flex-row justify-between text-sm w-3/5 mb-4">
-        <div className="flex items-center">
-          <p className="font-bold text-gray-800">{formattedDate}</p>
-          {readOnly && (
-            <>
-              <span className="ml-2 text-gray-600">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-3">
+            <p className="font-bold text-gray-800">{formattedDate}</p>
+            {readOnly && (
+              <span className="text-gray-600">
                 <Lock size={18} strokeWidth={2} />
               </span>
-              <button
-                type="button"
-                onClick={() => setIsDeleteDialogOpen(true)}
-                className="ml-2 text-gray-600 hover:text-red-600 transition-colors"
-                title="Delete note"
-              >
-                <Trash2 size={18} strokeWidth={2} />
-              </button>
-            </>
+            )}
+          </div>
+          {readOnly && (
+            <button
+              type="button"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="ml-2 hover:text-red-600 transition-colors shadow-none"
+              title="Delete note"
+            >
+              <Trash2 size={18} strokeWidth={2} />
+            </button>
           )}
         </div>
 
@@ -275,7 +207,8 @@ function NoteEditor({
       </div>
 
       {appleNoteContent && isTodayNote && !readOnly && (
-        <div className="w-3/5 mb-4 p-4 text-sm border border-amber-200 rounded-md bg-white shadow-sm max-h-60 overflow-auto">
+        <div className="w-3/5 mb-4 p-4 text-sm border border-amber-200 rounded-md bg-white shadow-sm max-h-60 overflow-auto relative">
+          <div className="absolute top-2 right-2"></div>
           {renderNoteContent()}
         </div>
       )}
@@ -285,7 +218,11 @@ function NoteEditor({
         className={`p-4 text-gray-900 rounded-md w-3/5 focus:outline-none focus:border-transparent text-sm resize-none ${
           readOnly ? 'bg-amber-50 border-amber-200' : ''
         }`}
-        value={content}
+        value={
+          readOnly && appleNoteContent
+            ? `${parseNoteContent(appleNoteContent)}\n\n${content}`
+            : content
+        }
         onChange={(e) => {
           onChange(e);
           if (!readOnly) {

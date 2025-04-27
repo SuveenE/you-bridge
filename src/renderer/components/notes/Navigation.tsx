@@ -22,6 +22,7 @@ function Navigation({
             onClick={toggleSidebar}
             className="p-1.5 rounded-md flex items-center justify-center text-gray-800 hover:text-amber-600 m-[10px] bg-transparent shadow-none"
             aria-label="Toggle Sidebar"
+            title="Look at past notes"
           >
             <History size={18} strokeWidth={2} />
           </button>
