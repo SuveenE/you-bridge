@@ -32,3 +32,4 @@ npm-debug.log.*
 .env
 .cursor
 NoteStack.p12
+dev-app-update.yml
