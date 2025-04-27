@@ -206,7 +206,7 @@
           "path": "/Applications"
         }
       ],
-      "artifactName": "${productName}-${version}.${ext}",
+      "artifactName": "${productName}.${ext}",
       "format": "ULFO"
     },
     "win": {

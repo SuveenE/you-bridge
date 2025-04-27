@@ -14,9 +14,25 @@ import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import setupAppleNotesHandlers from './appleNotes';
+import log from 'electron-log';
+
+// Configure logging
+log.transports.file.level = 'debug';
+log.transports.console.level = 'debug';
+
+// Override console logging
+Object.assign(console, log.functions);
 
 class AppUpdater {
   constructor() {
+    log.info('Initializing auto-updater');
+
+    // Allow updates in development
+    if (process.env.NODE_ENV === 'development') {
+      autoUpdater.forceDevUpdateConfig = true;
+      log.info('Development mode: Forcing dev update config');
+    }
+
     // Disable automatic downloading of updates
     autoUpdater.autoDownload = true;
     // Enable automatic installation of updates on the next computer restart
@@ -26,38 +42,72 @@ class AppUpdater {
       // Start listening for update events
       this.listenEvents();
       // Check for available updates
-      autoUpdater.checkForUpdates();
+      log.info('Checking for updates on startup');
+      this.checkForUpdates().catch(err => {
+        log.error('Failed to check for updates on startup:', err);
+      });
     } catch (error) {
-      console.error(error);
+      log.error('Error initializing auto-updater:', error);
     }
   }
 
-  async listenEvents() {
+  private async checkForUpdates(): Promise<void> {
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (error) {
+      log.error('Error checking for updates:', error);
+      throw error;
+    }
+  }
+
+  private async listenEvents(): Promise<void> {
     // Event listener for when the app is checking for updates
     autoUpdater.on('checking-for-update', () => {
-      console.log('Checking for updates...');
+      log.info('Checking for updates...');
     });
 
     // Event listener for when an update is available
     autoUpdater.on('update-available', (info) => {
-      console.log('Update available:', info);
+      log.info('Update available:', {
+        version: info.version,
+        releaseDate: info.releaseDate,
+        files: info.files,
+      });
       // Download the latest version of the update
-      autoUpdater.downloadUpdate();
+      autoUpdater.downloadUpdate().catch(err => {
+        log.error('Failed to download update:', err);
+      });
     });
 
     // Event listener for when no update is available
     autoUpdater.on('update-not-available', (info) => {
-      console.log('Update not available:', info);
+      log.info('Update not available. Current version is latest:', {
+        version: info.version,
+        releaseDate: info.releaseDate,
+      });
     });
 
     // Event listener for when an error occurs during the update process
     autoUpdater.on('error', (err) => {
-      console.log('Error in auto-updater:', err);
+      log.error('Error in auto-updater:', err);
+    });
+
+    // Event listener for download progress
+    autoUpdater.on('download-progress', (progressObj) => {
+      log.info('Download progress:', {
+        progress: `${progressObj.percent}%`,
+        speed: `${progressObj.bytesPerSecond} bytes/s`,
+        transferred: `${progressObj.transferred}/${progressObj.total} bytes`,
+      });
     });
 
     // Event listener for when an update has been downloaded
     autoUpdater.on('update-downloaded', (info) => {
-      console.log('Update downloaded:', info);
+      log.info('Update downloaded successfully:', {
+        version: info.version,
+        releaseDate: info.releaseDate,
+        files: info.files,
+      });
     });
   }
 }
