@@ -38,9 +38,8 @@ export default class MenuBuilder {
         dialog.showMessageBox(this.mainWindow, {
           type: 'info',
           title: 'Software Update',
-          message: 'You\'re up to date!',
+          message: "You're up to date!",
           detail: `NoteStack ${app.getVersion()} is currently the newest version available.`,
-          buttons: ['OK'],
         });
       }
     } catch (error) {
@@ -92,15 +91,7 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'About NoteStack',
-          click: () => {
-            dialog.showMessageBox(this.mainWindow, {
-              type: 'info',
-              title: 'About NoteStack',
-              message: `NoteStack ${app.getVersion()}`,
-              detail: 'Created by Suveen',
-              buttons: ['OK'],
-            });
-          },
+          selector: 'orderFrontStandardAboutPanel:',
         },
         {
           label: 'Check for Updates...',
