@@ -99,6 +99,12 @@ export default class MenuBuilder {
             this.checkForUpdates();
           },
         },
+        {
+          label: 'Restart to Update',
+          click: () => {
+            autoUpdater.quitAndInstall();
+          },
+        },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
@@ -261,6 +267,12 @@ export default class MenuBuilder {
             label: 'Check for Updates...',
             click: () => {
               this.checkForUpdates();
+            },
+          },
+          {
+            label: 'Restart to Update',
+            click: () => {
+              autoUpdater.quitAndInstall();
             },
           },
         ],
