@@ -1,15 +1,15 @@
 import { JSX } from 'react';
 import { format, parseISO, isToday } from 'date-fns';
 import { SquareChevronLeft } from 'lucide-react';
+import { NoteItem } from '../../../lib/types';
 
-interface Note {
-  date: string;
-  content: string;
-}
+type NotesMap = {
+  [date: string]: NoteItem[];
+};
 
 interface SidebarProps {
-  notes: Note[];
-  selectNote: (date: string, content: string) => void;
+  notes: NotesMap;
+  selectNote: (date: string) => void;
   setIsSidebarOpen: (open: boolean) => void;
 }
 
@@ -35,40 +35,45 @@ function Sidebar({
           </button>
         </div>
         <div className="space-y-1">
-          {notes
+          {Object.entries(notes)
             .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+              ([dateA], [dateB]) =>
+                new Date(dateB).getTime() - new Date(dateA).getTime(),
             )
-            .map((note) => (
-              <div
-                key={note.date}
-                className="w-full text-left p-2 hover:bg-amber-100 rounded cursor-pointer"
-                onClick={() => {
-                  selectNote(note.date, note.content);
-                  setIsSidebarOpen(false);
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    selectNote(note.date, note.content);
+            .map(([date, dateNotes]) => {
+              const latestNote = dateNotes[dateNotes.length - 1];
+              return (
+                <div
+                  key={date}
+                  className="w-full text-left p-2 hover:bg-amber-100 rounded cursor-pointer"
+                  onClick={() => {
+                    selectNote(date);
                     setIsSidebarOpen(false);
-                  }
-                }}
-              >
-                <div className="font-normal opacity-70 flex items-center justify-between">
-                  <div>{format(parseISO(note.date), 'EEE, MMM d, yyyy')}</div>
-                  {isToday(parseISO(note.date)) && (
-                    <div className="text-xs bg-amber-300 text-amber-900 px-2 py-0.5 rounded-lg">
-                      Today
-                    </div>
-                  )}
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      selectNote(date);
+                      setIsSidebarOpen(false);
+                    }
+                  }}
+                >
+                  <div className="font-normal opacity-70 flex items-center justify-between">
+                    <div>{format(parseISO(date), 'EEE, MMM d, yyyy')}</div>
+                    {isToday(parseISO(date)) && (
+                      <div className="text-xs bg-amber-300 text-amber-900 px-2 py-0.5 rounded-lg">
+                        Today
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xs opacity-50 truncate mt-1">
+                    {latestNote.note.substring(0, 40)}
+                    {latestNote.note.length > 40 && '...'}
+                  </div>
                 </div>
-                <div className="text-xs opacity-50 truncate mt-1">
-                  {note.content.substring(0, 40)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       </div>
     </div>

@@ -1,4 +1,7 @@
 import { format } from 'date-fns';
+import { DailyNotes } from '../../lib/types';
+
+const NOTES_STORAGE_KEY = 'daily_notes';
 
 export interface ReadItem {
   id: string;
@@ -83,22 +86,25 @@ export function addReadItems(newItems: ReadItem[]): ReadItem[] {
 export function extractReadsFromAllNotes(): ReadItem[] {
   try {
     // Get all saved notes
-    const savedNotes = localStorage.getItem('notes');
+    const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
     if (!savedNotes) return [];
 
-    const parsedNotes = JSON.parse(savedNotes);
-    if (!Array.isArray(parsedNotes)) return [];
-
-    // Extract read items from each note
+    const allNotes: DailyNotes = JSON.parse(savedNotes);
     const allReadItems: ReadItem[] = [];
 
-    parsedNotes.forEach((note: { date: string; content: string }) => {
-      const readItemsFromNote = extractReadItems(note.content);
+    // Extract read items from each note
+    Object.entries(allNotes).forEach(([date, dateNotes]) => {
+      // Combine all notes for this date
+      const combinedContent = Object.values(dateNotes)
+        .map((note) => note.note)
+        .join('\n');
+
+      const readItemsFromNote = extractReadItems(combinedContent);
 
       // Use the note's date as the dateAdded for these items
       const updatedItems = readItemsFromNote.map((item) => ({
         ...item,
-        dateAdded: note.date,
+        dateAdded: date,
       }));
 
       allReadItems.push(...updatedItems);

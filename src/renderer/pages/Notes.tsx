@@ -4,20 +4,19 @@ import { useLocation } from 'react-router-dom';
 import Navigation from '../components/notes/navigation';
 import Sidebar from '../components/notes/sidebar';
 import NoteEditor from '../components/notes/note-editor';
-import { extractReadItems, addReadItems } from '../lib/readUtils';
+import { NoteItem } from '../../lib/types';
 
-interface Note {
-  date: string;
-  content: string;
-}
+const NOTES_STORAGE_KEY = 'daily_notes';
+
+type NotesMap = {
+  [date: string]: NoteItem[];
+};
 
 export default function Notes() {
   const [content, setContent] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<NotesMap>({});
   const [selectedDate, setSelectedDate] = useState('');
-  const [appleNoteName, setAppleNoteName] = useState('Suveen Daily Notes');
-  const [todayOnly, setTodayOnly] = useState(true);
 
   const today = new Date();
   const todayString = format(today, 'yyyy-MM-dd');
@@ -28,70 +27,37 @@ export default function Notes() {
     const queryParams = new URLSearchParams(location.search);
     const dateParam = queryParams.get('date');
 
-    const savedNotes = localStorage.getItem('notes');
+    const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
     try {
       if (savedNotes) {
-        const parsedNotes = JSON.parse(savedNotes);
-        setNotes(parsedNotes);
+        const allNotes: NotesMap = JSON.parse(savedNotes);
+        setNotes(allNotes);
 
         // Use date from URL parameter if available, otherwise use today
         const targetDate = dateParam || todayString;
         setSelectedDate(targetDate);
 
         // Load the target date's note if it exists
-        const targetNote = parsedNotes.find(
-          (note: Note) => note.date === targetDate,
-        );
-
-        if (targetNote) {
-          setContent(targetNote.content);
+        if (allNotes[targetDate]?.length > 0) {
+          setContent(
+            allNotes[targetDate][allNotes[targetDate].length - 1].note,
+          );
         } else {
-          // If no note exists for the target date, set empty content
           setContent('');
-
-          // If the target date is today, create an empty note
-          if (targetDate === todayString) {
-            const updatedNotes = [
-              ...parsedNotes,
-              { date: todayString, content: '' },
-            ];
-            setNotes(updatedNotes);
-            localStorage.setItem('notes', JSON.stringify(updatedNotes));
-          }
         }
       } else {
-        // If no notes exist at all, initialize with an empty array
-        setNotes([]);
-        localStorage.setItem('notes', JSON.stringify([]));
-
-        // Use date from URL parameter if available, otherwise use today
+        // If no notes exist at all, initialize with an empty object
+        setNotes({});
+        localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify({}));
         setSelectedDate(dateParam || todayString);
       }
     } catch (error) {
-      // If there's an error parsing, initialize with empty array
-      setNotes([]);
-      localStorage.setItem('notes', JSON.stringify([]));
+      // If there's an error parsing, initialize with empty object
+      setNotes({});
+      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify({}));
       setSelectedDate(dateParam || todayString);
     }
   }, [location.search, todayString]);
-
-  // Load Apple Notes settings from local storage
-  useEffect(() => {
-    const savedSettings = localStorage.getItem('appleNotesSettings');
-    if (savedSettings) {
-      try {
-        const settings = JSON.parse(savedSettings);
-        if (settings.noteName) {
-          setAppleNoteName(settings.noteName);
-        }
-        if (settings.todayOnly !== undefined) {
-          setTodayOnly(settings.todayOnly);
-        }
-      } catch (error) {
-        console.error('Error loading Apple Notes settings:', error);
-      }
-    }
-  }, []);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
@@ -99,25 +65,58 @@ export default function Notes() {
 
     // Only update notes if editing today's note
     if (selectedDate === todayString) {
-      // Update notes array with today's note
-      const updatedNotes = notes.filter((note) => note.date !== selectedDate);
-      updatedNotes.push({ date: selectedDate, content: newContent });
+      const updatedNotes = { ...notes };
+      const noteItem: NoteItem = {
+        note: newContent,
+        time: new Date().toISOString(),
+        type: 'desktop_app',
+      };
+
+      if (!updatedNotes[selectedDate]) {
+        updatedNotes[selectedDate] = [];
+      }
+
+      if (
+        updatedNotes[selectedDate].length > 0 &&
+        updatedNotes[selectedDate][updatedNotes[selectedDate].length - 1]
+          .type === 'desktop_app'
+      ) {
+        // Update the last note if it's from desktop_app
+        updatedNotes[selectedDate][updatedNotes[selectedDate].length - 1] = noteItem;
+      } else {
+        // Add a new note
+        updatedNotes[selectedDate].push(noteItem);
+      }
+
       setNotes(updatedNotes);
+      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(updatedNotes));
+    }
+  };
 
-      // Save to localStorage
-      localStorage.setItem('notes', JSON.stringify(updatedNotes));
-
-      // Extract and save any read items
-      const readItems = extractReadItems(newContent);
-      if (readItems.length > 0) {
-        addReadItems(readItems);
+  const handleDelete = () => {
+    if (selectedDate === todayString) {
+      const updatedNotes = { ...notes };
+      if (updatedNotes[selectedDate]) {
+        updatedNotes[selectedDate] = updatedNotes[selectedDate].filter(
+          (note) => note.type !== 'desktop_app',
+        );
+        if (updatedNotes[selectedDate].length === 0) {
+          delete updatedNotes[selectedDate];
+        }
+        setNotes(updatedNotes);
+        setContent('');
+        localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(updatedNotes));
       }
     }
   };
 
-  const selectNote = (date: string, noteContent: string) => {
+  const selectNote = (date: string) => {
     setSelectedDate(date);
-    setContent(noteContent);
+    if (notes[date]?.length > 0) {
+      setContent(notes[date][notes[date].length - 1].note);
+    } else {
+      setContent('');
+    }
   };
 
   const toggleSidebar = () => {
@@ -142,6 +141,7 @@ export default function Notes() {
         content={content}
         onChange={handleContentChange}
         readOnly={isReadOnly}
+        onDelete={handleDelete}
       />
     </div>
   );

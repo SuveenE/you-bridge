@@ -16,7 +16,7 @@ function WatchListItem({ item, onToggle }: WatchListItemProps) {
     return match ? match[0] : null;
   };
 
-  const url = extractUrl(item.text);
+  const url = extractUrl(item.text) || item.text;
   const handleLinkClick = (e: React.MouseEvent, linkUrl: string) => {
     e.stopPropagation();
     window.open(linkUrl, '_blank');

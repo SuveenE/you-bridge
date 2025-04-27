@@ -8,7 +8,9 @@ import {
   differenceInMilliseconds,
 } from 'date-fns';
 import { useAppleNotes } from '../../../hooks/useAppleNotes';
+import useNotes from '../../../hooks/useNotes';
 import DeleteNoteDialog from './delete-note-dialog';
+import { NoteType } from '../../../lib/types';
 
 // Helper function to get today's date in DD/MM format
 const getTodayFormatted = () => {
@@ -34,6 +36,7 @@ function NoteEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [autoSyncScheduled, setAutoSyncScheduled] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { notes, saveNote } = useNotes(date);
 
   // Check if the currently viewed note is from today
   const isTodayNote = date ? isToday(parseISO(date)) : false;
@@ -76,6 +79,30 @@ function NoteEditor({
     adjustHeight();
   }, [content]);
 
+  // Display notes from the current date
+  useEffect(() => {
+    if (notes.length > 0) {
+      // Combine notes by type, maintaining order but updating content
+      const combinedContent = notes
+        .map((note) => {
+          if (note.type === 'desktop_app') {
+            return note.note;
+          }
+          if (note.type === 'apple_notes') {
+            return `\n\n--- Apple Notes Content ---\n${note.note}`;
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('\n\n');
+
+      const event = {
+        target: { value: combinedContent },
+      } as React.ChangeEvent<HTMLTextAreaElement>;
+      onChange(event);
+    }
+  }, [notes, onChange]);
+
   // Helper function to parse the Apple Notes content to extract only today's content
   const parseNoteContent = (noteText: string) => {
     // Get today's date in the format used in notes (DD/MM)
@@ -106,17 +133,24 @@ function NoteEditor({
     if (appleNoteContent && !readOnly && isTodayNote) {
       const todayContent = parseNoteContent(appleNoteContent);
 
-      // Combine the parsed content with existing content
+      if (!todayContent) {
+        return;
+      }
+
+      // Add Apple Notes content as a block at the bottom
       const updatedContent = content
-        ? `${content}\n\n---\nApple Notes content:\n${todayContent}`
+        ? `${content}\n\n--- Apple Notes Content ---\n${todayContent}`
         : todayContent;
+
+      // Save the combined content
+      saveNote(updatedContent, 'apple_notes' as NoteType);
 
       const event = {
         target: { value: updatedContent },
       } as React.ChangeEvent<HTMLTextAreaElement>;
       onChange(event);
     }
-  }, [appleNoteContent, readOnly, isTodayNote, content, onChange]);
+  }, [appleNoteContent, readOnly, isTodayNote, content, onChange, saveNote]);
 
   // Handle manual refresh when refresh icon is clicked
   const handleManualRefresh = async () => {
@@ -168,30 +202,24 @@ function NoteEditor({
       );
     }
 
-    const todayFormatted = getTodayFormatted();
-
     // Get today's content for the preview
     const todayContentPreview = appleNoteContent
       ? parseNoteContent(appleNoteContent)
       : '';
-    const previewContent = todayContentPreview;
 
-    if (previewContent === '') {
+    if (!todayContentPreview) {
       return (
         <p className="text-gray-700 text-xs">
-          No content from Apple Notes today. Please add notes with today&apos;s
-          date formatted as {todayFormatted}.
+          No new content available from Apple Notes.
         </p>
       );
     }
+
     // Display the Apple Note content with proper whitespace handling
     return (
       <div>
-        <p className="text-xs text-gray-600 mb-2 font-medium">
-          Apple Note preview (will be combined with your notes at end of day):
-        </p>
         <div className="apple-note-content whitespace-pre-line text-sm text-gray-800 overflow-auto">
-          {previewContent}
+          {todayContentPreview}
         </div>
       </div>
     );
@@ -260,6 +288,9 @@ function NoteEditor({
         value={content}
         onChange={(e) => {
           onChange(e);
+          if (!readOnly) {
+            saveNote(e.target.value, 'desktop_app' as NoteType);
+          }
           adjustHeight();
         }}
         placeholder="Start typing your notes here..."

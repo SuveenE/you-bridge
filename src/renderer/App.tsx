@@ -18,9 +18,11 @@ import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
 import HelpDialog from './components/home/help-dialog';
 import WelcomeDialog from './components/home/welcome-dialog';
+import { DailyNotes } from '../lib/types';
 
 // Key for storing start date in localStorage
 const START_DATE_KEY = 'note_start_date';
+const NOTES_STORAGE_KEY = 'daily_notes';
 
 function Hello() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -50,13 +52,13 @@ function Hello() {
     }
 
     // Load notes from localStorage
-    const savedNotes = localStorage.getItem('notes');
+    const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
     if (savedNotes) {
       try {
-        const parsedNotes = JSON.parse(savedNotes);
+        const allNotes: DailyNotes = JSON.parse(savedNotes);
         // Extract dates from notes and convert to Date objects
-        const dates = parsedNotes.map((note: { date: string }) => {
-          const noteDate = new Date(note.date);
+        const dates = Object.keys(allNotes).map((dateStr) => {
+          const noteDate = new Date(dateStr);
           noteDate.setHours(0, 0, 0, 0);
           return noteDate;
         });
@@ -109,8 +111,13 @@ function Hello() {
 
   // Calculate dates without notes for red highlighting (only after start date)
   const datesWithoutNotes = startDate
-    ? Array.from(
-        { length: Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1 },
+    ? (Array.from(
+        {
+          length:
+            Math.ceil(
+              (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+            ) + 1,
+        },
         (_, i) => {
           const currentDate = new Date(startDate);
           currentDate.setDate(startDate.getDate() + i);
@@ -128,11 +135,11 @@ function Hello() {
 
           return hasNote ? null : currentDate;
         },
-      ).filter(Boolean) as Date[]
+      ).filter(Boolean) as Date[])
     : [];
 
   // Create a separate array with just the dates that have notes
-  const actualNoteDates = noteDates.filter(noteDate => {
+  const actualNoteDates = noteDates.filter((noteDate) => {
     // Make sure we're only showing notes for dates on or after the start date
     // and for dates not in the future
     if (!startDate) return false;
