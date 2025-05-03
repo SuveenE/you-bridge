@@ -1,20 +1,11 @@
-export type NoteType = 'desktop_app' | 'apple_notes';
-
-export interface NoteItem {
-  note: string;
-  time: string;
-  type: NoteType;
-}
-
-export interface DailyNotes {
-  [key: string]: {
-    [key: number]: NoteItem;
-  };
+export function getTodayFormatted() {
+  const today = new Date();
+  return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}`;
 }
 
 export const formatDateKey = (date: Date): string => {
   return `${String(date.getDate()).padStart(2, '0')}/${String(
-    date.getMonth() + 1
+    date.getMonth() + 1,
   ).padStart(2, '0')}/${date.getFullYear()}`;
 };
 

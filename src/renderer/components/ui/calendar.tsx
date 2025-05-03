@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker, DayPickerSingleProps } from 'react-day-picker';
 
-import { cn } from 'src/lib/utils';
+import { cn } from '@/src/renderer/lib/utils';
 import { buttonVariants } from 'src/renderer/components/ui/button';
 
 interface IconProps {

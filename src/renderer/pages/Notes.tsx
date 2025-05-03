@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useLocation } from 'react-router-dom';
-import Navigation from '../components/notes/navigation';
-import Sidebar from '../components/notes/sidebar';
+import Navigation from '../components/notes/Navigation';
+import Sidebar from '../components/notes/Sidebar';
 import NoteEditor from '../components/notes/note-editor';
 
 const NOTES_STORAGE_KEY = 'daily_notes';

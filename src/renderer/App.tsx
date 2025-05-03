@@ -19,7 +19,7 @@ import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
 import HelpDialog from './components/home/help-dialog';
 import WelcomeDialog from './components/home/welcome-dialog';
-import { DailyNotes } from '../lib/types';
+import { DailyNotes } from './lib/types';
 import Chat from './pages/Chat';
 
 // Key for storing start date in localStorage
