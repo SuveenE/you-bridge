@@ -1,6 +1,5 @@
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import { ipcMain } from 'electron';
 
 const execPromise = promisify(exec);
 
@@ -67,7 +66,7 @@ function stripHtml(htmlString: string, noteName: string = ''): string {
  * @param noteName The name of the note/folder to search for
  * @returns The content of the note or null if not found
  */
-async function fetchAppleNote(noteName: string): Promise<string | null> {
+export async function fetchAppleNote(noteName: string): Promise<string | null> {
   try {
     // AppleScript to get the content of a specific note
     const script = `
@@ -101,7 +100,7 @@ async function fetchAppleNote(noteName: string): Promise<string | null> {
  * @param noteName The name of the note to search for
  * @returns Today's content or null if not found
  */
-async function fetchTodaysAppleNoteContent(
+export async function fetchTodaysAppleNoteContent(
   noteName: string,
 ): Promise<string | null> {
   try {
@@ -134,18 +133,3 @@ async function fetchTodaysAppleNoteContent(
     return null;
   }
 }
-
-// Set up IPC handlers
-export function setupAppleNotesHandlers() {
-  ipcMain.handle('fetch-apple-note', async (_, noteName: string) => {
-    console.log('Fetching Apple Note:', noteName);
-    return fetchAppleNote(noteName);
-  });
-
-  ipcMain.handle('fetch-todays-apple-note', async (_, noteName: string) => {
-    console.log('Fetching Apple Note content:', noteName);
-    return fetchTodaysAppleNoteContent(noteName);
-  });
-}
-
-export default setupAppleNotesHandlers;

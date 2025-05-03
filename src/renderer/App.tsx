@@ -6,8 +6,9 @@ import {
   useNavigate,
   Link,
 } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { BookOpen, FileText, Film } from 'lucide-react';
+import { BookOpen, FileText, Film, MessageSquare } from 'lucide-react';
 import 'tldraw/tldraw.css';
 import icon from '../../assets/icon.png';
 import './App.css';
@@ -19,6 +20,7 @@ import { Calendar } from './components/ui/calendar';
 import HelpDialog from './components/home/help-dialog';
 import WelcomeDialog from './components/home/welcome-dialog';
 import { DailyNotes } from '../lib/types';
+import Chat from './pages/Chat';
 
 // Key for storing start date in localStorage
 const START_DATE_KEY = 'note_start_date';
@@ -190,6 +192,13 @@ function Hello() {
             ⌘ K
           </span>
         </Link>
+        <Link
+          to="/chat"
+          className="px-4 py-2 bg-amber-50 text-gray-700 rounded-md hover:bg-amber-100 transition-all shadow-sm font-medium flex items-center gap-2"
+        >
+          <MessageSquare size={16} strokeWidth={2} />
+          <span>Chat</span>
+        </Link>
       </div>
 
       <Calendar
@@ -232,16 +241,21 @@ function Hello() {
   );
 }
 
+const queryClient = new QueryClient();
+
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/reads" element={<Reads />} />
-        <Route path="/watchlist" element={<WatchList />} />
-      </Routes>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Hello />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/reads" element={<Reads />} />
+          <Route path="/watchlist" element={<WatchList />} />
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   );
 }
