@@ -10,10 +10,10 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import log from 'electron-log';
 
 // Configure logging
 log.transports.file.level = 'debug';
