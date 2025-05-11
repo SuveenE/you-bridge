@@ -14,7 +14,6 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { setupAppleNotesHandlers } from './controllers/appleNotesController';
 
 // Configure logging
 log.transports.file.level = 'debug';
@@ -125,9 +124,6 @@ ipcMain.on('restart_app', () => {
   log.info('Restarting app for update installation...');
   autoUpdater.quitAndInstall();
 });
-
-// Setup Apple Notes integration
-setupAppleNotesHandlers();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
