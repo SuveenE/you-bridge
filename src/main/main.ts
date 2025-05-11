@@ -125,9 +125,6 @@ ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
 });
 
-// Setup Apple Notes integration
-setupAppleNotesHandlers();
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();

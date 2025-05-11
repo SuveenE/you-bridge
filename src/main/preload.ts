@@ -25,13 +25,6 @@ const electronHandler = {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
   },
-  // Add Apple Notes API
-  appleNotes: {
-    fetchNote: (noteName: string): Promise<string | null> =>
-      ipcRenderer.invoke('fetch-apple-note', noteName),
-    fetchTodaysNote: (noteName: string): Promise<string | null> =>
-      ipcRenderer.invoke('fetch-todays-apple-note', noteName),
-  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
