@@ -3,8 +3,8 @@ import { Lock, RefreshCw, Trash2 } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
 import { useAppleNotes } from '../../hooks/useAppleNotes';
 import useNotes from '../../hooks/useNotes';
-import DeleteNoteDialog from './delete-note-dialog';
 import { NoteType } from '../../lib/types';
+import DeleteNoteDialog from './DeleteNoteDialog';
 
 // Helper function to get today's date in DD/MM format
 const getTodayFormatted = () => {

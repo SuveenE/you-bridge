@@ -17,8 +17,8 @@ import Notes from './pages/Notes';
 import Reads from './pages/Reads';
 import WatchList from './pages/WatchList';
 import { Calendar } from './components/ui/calendar';
-import HelpDialog from './components/home/help-dialog';
-import WelcomeDialog from './components/home/welcome-dialog';
+import HelpDialog from './components/home/HelpDialog';
+import WelcomeDialog from './components/home/WelcomeDialog';
 import { DailyNotes } from './lib/types';
 import Chat from './pages/Chat';
 

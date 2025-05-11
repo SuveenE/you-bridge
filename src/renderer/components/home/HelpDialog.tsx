@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from '../ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs';
-import { HowToTab, SettingsTab } from './help-dialog-tabs';
+import { HowToTab, SettingsTab } from './HelpDialogTabs';
 
 // eslint-disable-next-line react/require-default-props
 interface HelpDialogProps {

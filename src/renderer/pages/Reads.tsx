@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Home, RefreshCw, BookOpen } from 'lucide-react';
+import { RefreshCw, BookOpen } from 'lucide-react';
 import {
   getReadItems,
   toggleReadItem,
@@ -13,7 +12,8 @@ import {
   TabsTrigger,
   TabsContent,
 } from '../components/ui/tabs';
-import ReadListItem from '../components/reads/read-list-item';
+import ReadListItem from '../components/reads/ReadListItem';
+import PageNav from '../components/shared/PageNav';
 
 // Read items list component
 function ReadItemsList({
@@ -72,28 +72,23 @@ export default function Reads() {
   const pendingItems = readItems.filter((item) => !item.done);
   const doneItems = readItems.filter((item) => item.done);
 
+  const navButtons = [
+    {
+      id: 'refresh',
+      icon: (
+        <RefreshCw
+          className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`}
+        />
+      ),
+      onClick: loadReadItems,
+      title: 'Scan all notes for reading items',
+      disabled: isLoading,
+    },
+  ];
+
   return (
     <div className="flex flex-col h-screen bg-white text-black">
-      {/* Top navigation */}
-      <div className="fixed top-3 right-3 flex gap-2 z-10 text-xs">
-        <Link
-          to="/"
-          className="p-1 rounded flex items-center justify-center opacity-60 hover:opacity-100"
-        >
-          <Home className="h-4 w-4" />
-        </Link>
-        <button
-          type="button"
-          onClick={loadReadItems}
-          className="p-1.5 rounded-md bg-amber-200 text-amber-800 hover:bg-amber-300 transition-colors"
-          title="Scan all notes for reading items"
-          disabled={isLoading}
-        >
-          <RefreshCw
-            className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`}
-          />
-        </button>
-      </div>
+      <PageNav buttons={navButtons} />
 
       <div className="flex flex-col items-center w-full max-w-4xl mx-auto pt-16 px-6 pb-6 h-screen">
         <div className="w-full max-w-xl items-center mb-6">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Home, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import HelpDialog from '../home/help-dialog';
+import HelpDialog from '../home/HelpDialog';
 
 interface NavigationProps {
   toggleSidebar: () => void;
