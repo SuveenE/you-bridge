@@ -12,13 +12,10 @@ import 'tldraw/tldraw.css';
 import icon from '../../assets/icon.png';
 import './App.css';
 
-
 function Hello() {
   const navigate = useNavigate();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
-
 
   // Add keyboard shortcuts
   useEffect(() => {

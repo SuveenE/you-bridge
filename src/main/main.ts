@@ -42,7 +42,7 @@ class AppUpdater {
       this.listenEvents();
       // Check for available updates
       log.info('Checking for updates on startup');
-      this.checkForUpdates().catch(err => {
+      this.checkForUpdates().catch((err) => {
         log.error('Failed to check for updates on startup:', err);
       });
     } catch (error) {
@@ -73,7 +73,7 @@ class AppUpdater {
         files: info.files,
       });
       // Download the latest version of the update
-      autoUpdater.downloadUpdate().catch(err => {
+      autoUpdater.downloadUpdate().catch((err) => {
         log.error('Failed to download update:', err);
       });
     });

@@ -48,14 +48,12 @@ function Calendar({
 
       // If originalDisabled is an array of dates, check if the date is in the array
       if (Array.isArray(originalDisabled)) {
-        return originalDisabled.some(
-          (disabledDate) => {
-            if (disabledDate instanceof Date) {
-              return disabledDate.getTime() === date.getTime();
-            }
-            return false;
+        return originalDisabled.some((disabledDate) => {
+          if (disabledDate instanceof Date) {
+            return disabledDate.getTime() === date.getTime();
           }
-        );
+          return false;
+        });
       }
 
       // If originalDisabled is a boolean (true), disable the date
@@ -66,7 +64,7 @@ function Calendar({
       // Default: don't disable
       return false;
     },
-    [originalDisabled, today]
+    [originalDisabled, today],
   );
 
   return (
