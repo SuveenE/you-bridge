@@ -11,9 +11,10 @@
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import log from 'electron-log';
+import { setupAppleNotesHandlers } from './controllers/appleNotesController';
 
 // Configure logging
 log.transports.file.level = 'debug';
@@ -111,7 +112,7 @@ class AppUpdater {
   }
 }
 
-let mainWindow: typeof BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
