@@ -1,4 +1,4 @@
-The NoteStack
+You bridge 🌉
 
 # install
 
