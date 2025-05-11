@@ -39,7 +39,8 @@ export default class MenuBuilder {
 
   private updateMenu(): void {
     if (this.menu) {
-      const template = process.platform === 'darwin'
+      const template =
+        process.platform === 'darwin'
           ? this.buildDarwinTemplate()
           : this.buildDefaultTemplate();
       const newMenu = Menu.buildFromTemplate(template);
@@ -85,7 +86,8 @@ export default class MenuBuilder {
         type: 'info',
         title: 'Update Ready',
         message: 'A new version has been downloaded',
-        detail: 'The update will be installed when you restart the application.',
+        detail:
+          'The update will be installed when you restart the application.',
         buttons: ['Restart Now', 'Later'],
         defaultId: 0,
       });
@@ -335,5 +337,3 @@ export default class MenuBuilder {
     ];
   }
 }
-
-
