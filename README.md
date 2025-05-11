@@ -1,6 +1,6 @@
-You bridge 🌉
+# You bridge
 
-# install
+## Install
 
 ```bash
 npm install
