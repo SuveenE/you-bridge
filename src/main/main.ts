@@ -50,6 +50,7 @@ class AppUpdater {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private async checkForUpdates(): Promise<void> {
     try {
       await autoUpdater.checkForUpdates();
@@ -59,6 +60,7 @@ class AppUpdater {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private async listenEvents(): Promise<void> {
     // Event listener for when the app is checking for updates
     autoUpdater.on('checking-for-update', () => {
