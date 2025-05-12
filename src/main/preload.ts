@@ -1,7 +1,7 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
-import { bridgeFile } from '@/src/types/files';
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { bridgeFile } from '@/types/files';
 
 export type Channels = 'ipc-example' | 'restart_app';
 

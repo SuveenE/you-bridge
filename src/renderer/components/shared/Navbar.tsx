@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { HelpCircle } from 'lucide-react';
-import { Button } from '../ui/button';
-import HelpDialog from '../home/HelpDialog';
+import { Button } from '@/renderer/components/ui/button';
+import HelpDialog from '@/renderer/components/home/HelpDialog';
 
 export function Navbar() {
   const [helpOpen, setHelpOpen] = React.useState(false);

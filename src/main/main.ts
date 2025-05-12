@@ -8,8 +8,8 @@ import debug from 'electron-debug';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from 'electron-devtools-installer';
-import MenuBuilder from './menu';
-import { AppUpdater, resolveHtmlPath } from './util';
+import MenuBuilder from '@/main/menu';
+import { AppUpdater, resolveHtmlPath } from '@/main/util';
 
 log.transports.file.level = 'debug';
 log.transports.console.level = 'debug';
