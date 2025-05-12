@@ -12,14 +12,13 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
+import { promises as fs } from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
-// Configure logging
 log.transports.file.level = 'debug';
 log.transports.console.level = 'debug';
 
-// Override console logging
 Object.assign(console, log.functions);
 
 class AppUpdater {
@@ -125,6 +124,29 @@ ipcMain.on('ipc-example', async (event, arg) => {
 ipcMain.on('restart_app', () => {
   log.info('Restarting app for update installation...');
   autoUpdater.quitAndInstall();
+});
+
+ipcMain.handle('store-file', async (_event, record) => {
+  const userData = app.getPath('userData');
+  const storePath = path.join(userData, 'files.json');
+
+  let files = [];
+  try {
+    const raw = await fs.readFile(storePath, 'utf8');
+    files = JSON.parse(raw);
+  } catch (err: any) {
+    if (err.code !== 'ENOENT') throw err;
+  }
+
+  files.push(record);
+  await fs.mkdir(path.dirname(storePath), { recursive: true });
+  await fs.writeFile(storePath, JSON.stringify(files, null, 2), 'utf8');
+
+  log.info('File stored successfully at location:', {
+    storePath,
+  });
+
+  return { success: true };
 });
 
 if (process.env.NODE_ENV === 'production') {
