@@ -1,5 +1,7 @@
 # You bridge
 
+Upload documents about you and expose it as a MCP server to any AI application.
+
 ## Install
 
 ```bash
