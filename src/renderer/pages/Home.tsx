@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import icon from '../../../assets/icon.png';
 import '../App.css';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import storeFile from '@/src/main/services/files';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -42,7 +43,19 @@ export default function Home() {
     };
   }, [navigate]);
 
-  // Create a separate array with just the dates that have notes
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    window.electron.ipcRenderer
+      .storeFile(file)
+      .then((result) => {
+        console.log('processing result:', result);
+        return result;
+      })
+      .catch((err) => {
+        console.error('processing failed:', err);
+      });
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
@@ -51,7 +64,7 @@ export default function Home() {
       <img width="100" alt="icon" className="mb-6" src={icon} />
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="picture">Files</Label>
-        <Input id="picture" type="file" />
+        <Input id="picture" type="file" onChange={handleFileChange} />
       </div>
       <div className="text-sm text-gray-500 my-8">
         <span>
