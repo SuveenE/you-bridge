@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import icon from '../../../assets/icon.png';
+import image from '../../../assets/hands.png';
 import '../App.css';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Navbar } from '../components/shared/navbar';
+import Navbar from '../components/shared/Navbar';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ export default function Home() {
       <Navbar />
       <p className="text-lg font-bold my-2">You bridge</p>
 
-      <img width="100" alt="icon" className="mb-6" src={icon} />
+      <img width="100" alt="icon" className="mb-6 rounded-2xl" src={image} />
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="picture">Files</Label>
         <Input id="picture" type="file" />
