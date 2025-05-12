@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import icon from '../../../assets/icon.png';
 import '../App.css';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -47,9 +49,10 @@ export default function Home() {
       <p className="text-lg font-bold my-2">You bridge</p>
 
       <img width="100" alt="icon" className="mb-6" src={icon} />
-      <p className="text-sm text-gray-500 mb-4">
-        A simple way to connect your data to AIs using your own mcp server.
-      </p>
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor="picture">Files</Label>
+        <Input id="picture" type="file" />
+      </div>
       <div className="text-sm text-gray-500 my-8">
         <span>
           <a
