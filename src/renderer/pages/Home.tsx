@@ -4,7 +4,6 @@ import icon from '../../../assets/icon.png';
 import '../App.css';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import storeFile from '@/src/main/services/files';
 
 export default function Home() {
   const navigate = useNavigate();
