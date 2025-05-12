@@ -4,6 +4,7 @@ import icon from '../../../assets/icon.png';
 import '../App.css';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { Navbar } from '../components/shared/navbar';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 relative">
+      <Navbar />
       <p className="text-lg font-bold my-2">You bridge</p>
 
       <img width="100" alt="icon" className="mb-6" src={icon} />
